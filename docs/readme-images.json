@@ -14,8 +14,8 @@
   },
   "cards": {
     "features": [
-      { "icon": "hand-back-right-outline", "title": "Knows when you took over", "text": "Recall learns the state the automation ends up in. Moved the blind or dimmed the light since? recall.restore leaves it alone." },
-      { "icon": "bookmark-multiple-outline", "title": "Named slots", "text": "Two automations on the same blind no longer overwrite each other. Slots even hand over to each other in any order." },
+      { "icon": "hand-back-right-outline", "title": "Knows when you took over", "text": "Recall learns the state the automation ends up in. Dimmed the light, moved the blind or turned up the heating since? recall.restore leaves it alone." },
+      { "icon": "bookmark-multiple-outline", "title": "Named slots", "text": "Two automations on the same device no longer overwrite each other. Slots even hand over to each other in any order." },
       { "icon": "content-save-outline", "title": "Survives restarts", "text": "Stored in .storage/recall.snapshots, not in the attributes of an entity." },
       { "icon": "movie-open-outline", "title": "Restores like a scene", "text": "Home Assistant's own reproduce_state brings back position and tilt, brightness and colour, climate targets and more. Optional light transition." },
       { "icon": "timer-sand", "title": "Expiry", "text": "expires_after forgets a remembered state that was never restored, set per action or as a default." },

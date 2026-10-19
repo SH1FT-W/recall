@@ -18,7 +18,7 @@ A modern replacement for <b>Saver</b>.</p>
 
 <br/>
 
-Automations often do *"remember the blind, move it, put it back later"*. The usual tool for that is [Saver](https://github.com/PiotrMachowski/Home-Assistant-custom-components-Saver). Recall does the same job and fixes what made Saver awkward in practice: it **notices when someone took over** and leaves that device alone, keeps **named slots** so two automations do not overwrite each other, and **survives restarts**. No more `input_boolean.*_controlled_by_automation` helpers.
+Many automations change something for a while and put it back afterwards: lights for a movie, blinds for the sun, the thermostat while a window is open, the speaker volume for an announcement. The usual tool for that is [Saver](https://github.com/PiotrMachowski/Home-Assistant-custom-components-Saver). Recall does the same job and fixes what made Saver awkward in practice: it **notices when someone took over** and leaves that device alone, keeps **named slots** so two automations do not overwrite each other, and **survives restarts**. No more `input_boolean.*_controlled_by_automation` helpers.
 
 > [!NOTE]
 > Recall is an independent project. It is not affiliated with Saver or its author, and contains no code from it.
