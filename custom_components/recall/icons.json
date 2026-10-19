@@ -1,0 +1,21 @@
+{
+  "entity": {
+    "sensor": {
+      "saved_states": {
+        "default": "mdi:bookmark-multiple-outline",
+        "range": {
+          "0": "mdi:bookmark-outline",
+          "1": "mdi:bookmark-multiple"
+        }
+      }
+    }
+  },
+  "services": {
+    "save": { "service": "mdi:bookmark-plus" },
+    "restore": { "service": "mdi:history" },
+    "forget": { "service": "mdi:bookmark-remove" }
+  },
+  "conditions": {
+    "is_saved": { "condition": "mdi:bookmark-check" }
+  }
+}

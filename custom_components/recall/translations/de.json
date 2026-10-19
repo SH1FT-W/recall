@@ -1,0 +1,205 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Recall",
+        "description": "Recall merkt sich Zustände mit `recall.save` und stellt sie mit `recall.restore` wieder her – außer jemand hat das Gerät inzwischen selbst verstellt. Keine Einstellungen nötig."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Recall ist schon eingerichtet."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "saved_states": {
+        "name": "Gemerkte Zustände",
+        "unit_of_measurement": "Entitäten"
+      }
+    }
+  },
+  "issues": {
+    "saver_installed": {
+      "title": "Saver ist noch installiert",
+      "description": "Recall ersetzt die Integration Saver. Sobald alle Automationen `recall.save` / `recall.restore` statt `saver.save_state` / `saver.restore_state` nutzen, die Integration Saver löschen und in HACS entfernen. Dieser Hinweis verschwindet dann von selbst."
+    }
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "Recall ist nicht eingerichtet."
+    },
+    "no_entities": {
+      "message": "Keine Entitäten zum Merken ausgewählt."
+    },
+    "nothing_saved": {
+      "message": "Nichts gemerkt: {entity_id} gibt es nicht oder ist nicht verfügbar."
+    },
+    "forget_nothing": {
+      "message": "Zum Vergessen einen Slot, Entitäten oder beides angeben."
+    },
+    "restore_failed": {
+      "message": "Wiederherstellen fehlgeschlagen: {error}"
+    }
+  },
+  "services": {
+    "save": {
+      "name": "Zustand merken",
+      "description": "Merkt sich den aktuellen Zustand von Entitäten in einem Slot, um ihn später wiederherzustellen.",
+      "fields": {
+        "slot": {
+          "name": "Slot",
+          "description": "Name des Merk-Slots. Verschiedene Automationen bekommen verschiedene Slots, dann überschreiben sie sich nicht."
+        },
+        "expires_after": {
+          "name": "Verfällt nach",
+          "description": "Gemerkten Zustand nach dieser Zeit automatisch vergessen. Leer = Einstellung der Integration, 0 = nie."
+        },
+        "overwrite": {
+          "name": "Überschreiben",
+          "description": "Einen schon gemerkten Zustand in diesem Slot ersetzen. Aus behält den ersten (ursprünglichen) Zustand."
+        },
+        "tolerance": {
+          "name": "Toleranz",
+          "description": "Wie weit Position, Lamellen, Helligkeit, Lüfterstufe oder Lautstärke abweichen dürfen (Prozentpunkte), bevor es als Handeingriff zählt. Leer = Einstellung der Integration."
+        }
+      }
+    },
+    "restore": {
+      "name": "Zustand wiederherstellen",
+      "description": "Stellt den gemerkten Zustand wieder her. Entitäten, die inzwischen jemand selbst verstellt hat, bleiben, wie sie sind.",
+      "fields": {
+        "entity_id": {
+          "name": "Entitäten",
+          "description": "Nur diese Entitäten wiederherstellen. Leer = alles, was im Slot gemerkt ist. In YAML geht auch `target` mit Bereichen, Geräten oder Labels."
+        },
+        "slot": {
+          "name": "Slot",
+          "description": "Name des Merk-Slots."
+        },
+        "only_if_unchanged": {
+          "name": "Nur wenn unverändert",
+          "description": "Entitäten überspringen, die nach der Automation von Hand oder von einer anderen Automation verstellt wurden. Leer = Einstellung der Integration."
+        },
+        "forget": {
+          "name": "Danach vergessen",
+          "description": "Gemerkten Zustand nach dem Wiederherstellen löschen (auch wenn wegen Handeingriff übersprungen). Leer = Einstellung der Integration."
+        },
+        "transition": {
+          "name": "Übergang",
+          "description": "Überblendzeit für Lichter in Sekunden."
+        }
+      }
+    },
+    "forget": {
+      "name": "Zustand vergessen",
+      "description": "Löscht gemerkte Zustände, ohne sie wiederherzustellen. Ohne Slot gilt es für alle Slots, ohne Entitäten für den ganzen Slot.",
+      "fields": {
+        "entity_id": {
+          "name": "Entitäten",
+          "description": "Nur diese Entitäten vergessen. Leer = der ganze Slot. In YAML geht auch `target` mit Bereichen, Geräten oder Labels."
+        },
+        "slot": {
+          "name": "Slot",
+          "description": "Name des Merk-Slots."
+        }
+      }
+    }
+  },
+  "conditions": {
+    "is_saved": {
+      "name": "Zustand ist gemerkt",
+      "description": "Prüft, ob für alle Ziel-Entitäten in einem Slot ein Zustand gemerkt ist.",
+      "fields": {
+        "slot": {
+          "name": "Slot",
+          "description": "Name des Merk-Slots."
+        },
+        "unchanged": {
+          "name": "Nur wenn unverändert",
+          "description": "Zusätzlich verlangen, dass niemand die Entitäten seit der Automation selbst verstellt hat."
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Recall",
+        "menu_options": {
+          "settings": "Standardeinstellungen",
+          "saved": "Gemerkte Zustände"
+        }
+      },
+      "settings": {
+        "title": "Standardeinstellungen",
+        "description": "Diese Werte gelten immer dann, wenn eine Automation das Feld in `recall.save` oder `recall.restore` nicht selbst angibt. Änderungen wirken sofort, ohne Neustart.",
+        "sections": {
+          "restore": {
+            "name": "Wiederherstellen",
+            "description": "Was beim Wiederherstellen passiert.",
+            "data": {
+              "only_if_unchanged": "Handeingriff respektieren",
+              "forget": "Danach vergessen"
+            },
+            "data_description": {
+              "only_if_unchanged": "An: Hat jemand das Gerät nach der Automation selbst verstellt (von Hand, in der App oder durch eine andere Automation), bleibt es so. Aus: Es wird immer zurückgestellt.",
+              "forget": "An: Der gemerkte Zustand wird einmal benutzt und dann gelöscht. Aus: Er bleibt gemerkt und kann noch einmal wiederhergestellt werden."
+            }
+          },
+          "detection": {
+            "name": "Handeingriff erkennen",
+            "description": "Feineinstellung; die Standardwerte passen für die meisten Jalousien und Lichter.",
+            "data": {
+              "tolerance": "Toleranz",
+              "settle_quiet": "Ruhezeit",
+              "settle_wait": "Wartezeit ohne Änderung",
+              "settle_max": "Höchstens warten"
+            },
+            "data_description": {
+              "tolerance": "Wie weit Position, Lamellen, Helligkeit, Lüfterstufe oder Lautstärke abweichen dürfen, ohne als Handeingriff zu zählen (z. B. Jalousie bleibt bei 41 % statt 40 % stehen).",
+              "settle_quiet": "Nachdem die Automation ein Gerät verstellt hat, muss es so lange still stehen. Diese Endstellung ist das, was die Automation wollte.",
+              "settle_wait": "Ändert sich nach dem Merken gar nichts, wartet Recall so lange und nimmt dann den aktuellen Zustand als gewollt.",
+              "settle_max": "Geräte, die nie zur Ruhe kommen, werden spätestens nach dieser Zeit festgelegt."
+            }
+          },
+          "expiry": {
+            "name": "Verfallen",
+            "description": "Gemerkte Zustände, die nie wiederhergestellt werden (z. B. nach einem Stromausfall), werden automatisch vergessen.",
+            "data": {
+              "expires_after": "Vergessen nach"
+            },
+            "data_description": {
+              "expires_after": "Leer oder 0 = nie von selbst vergessen. Eine Automation kann mit „Verfällt nach“ einen eigenen Wert setzen."
+            }
+          }
+        }
+      },
+      "saved": {
+        "title": "Gemerkte Zustände",
+        "description": "Zurzeit gemerkt (⏳ = wird vergessen am, ✋ = inzwischen von Hand verstellt, ↪ = geht an diesen Slot über):\n\n{overview}\n\nSlots zum Vergessen ankreuzen. Dabei bewegt sich nichts.",
+        "data": {
+          "slots": "Slots vergessen"
+        },
+        "data_description": {
+          "slots": "Die gewählten Slots werden gelöscht, ohne wiederherzustellen."
+        }
+      }
+    },
+    "abort": {
+      "not_loaded": "Recall ist nicht geladen.",
+      "nothing_saved": "Zurzeit ist nichts gemerkt."
+    }
+  },
+  "selector": {
+    "reason": {
+      "options": {
+        "manual": "Von Hand verstellt",
+        "moving": "In Bewegung",
+        "unavailable": "Nicht verfügbar",
+        "not_saved": "Nicht gemerkt",
+        "handed_over": "An anderen Slot übergeben",
+        "unsupported": "Nicht wiederherstellbar"
+      }
+    }
+  }
+}

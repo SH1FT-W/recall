@@ -1,0 +1,122 @@
+# Integration Quality Scale, selbst geprüft (keine Core-Integration, die Stufe ist nicht offiziell).
+# Regeln: https://developers.home-assistant.io/docs/core/integration-quality-scale/rules
+rules:
+  # Bronze
+  action-setup:
+    status: done
+    comment: recall.save/restore/forget werden in async_setup registriert und melden ohne Eintrag „nicht eingerichtet“.
+  appropriate-polling:
+    status: exempt
+    comment: Kein Abfragen; Recall hört nur auf Zustandsänderungen und plant Termine (Beruhigen, Ablauf) genau.
+  brands: done
+  common-modules:
+    status: done
+    comment: Logik in manager.py, reiner Vergleich in compare.py, Aktionen in services.py.
+  config-flow-test-coverage: done
+  config-flow: done
+  dependency-transparency:
+    status: exempt
+    comment: Keine externen Abhängigkeiten.
+  docs-actions: done
+  docs-triggers:
+    status: exempt
+    comment: Keine eigenen Auslöser; Ereignisse recall_saved/_restored/_skipped/_forgotten sind im README beschrieben.
+  docs-conditions: done
+  docs-high-level-description: done
+  docs-installation-instructions: done
+  docs-removal-instructions: done
+  entity-event-setup:
+    status: done
+    comment: Der Sensor meldet sich in async_added_to_hass beim Manager an und über async_on_remove ab.
+  entity-unique-id: done
+  has-entity-name: done
+  runtime-data: done
+  test-before-configure:
+    status: exempt
+    comment: Keine Verbindung, nichts zu prüfen.
+  test-before-setup:
+    status: exempt
+    comment: Kein Gerät und kein Dienst; das Laden des Speichers kann nicht scheitern (beschädigte Einträge werden verworfen).
+  unique-config-entry:
+    status: done
+    comment: single_config_entry im Manifest.
+
+  # Silver
+  action-exceptions:
+    status: done
+    comment: Übersetzte ServiceValidationError (falsche Eingaben) und HomeAssistantError (Wiederherstellen fehlgeschlagen).
+  config-entry-unloading: done
+  docs-configuration-parameters:
+    status: done
+    comment: Options-Flow „Konfigurieren“ (Standardwerte, gemerkte Zustände vergessen) im README beschrieben.
+  docs-installation-parameters:
+    status: exempt
+    comment: Die Einrichtung fragt nichts ab.
+  entity-unavailable:
+    status: exempt
+    comment: Der Sensor rechnet nur mit HA-internen Daten und ist immer verfügbar.
+  integration-owner: done
+  log-when-unavailable:
+    status: exempt
+    comment: Nichts, das ausfallen könnte; nicht verfügbare Ziel-Entitäten stehen in den Antwortdaten (Grund unavailable).
+  parallel-updates: done
+  reauthentication-flow:
+    status: exempt
+    comment: Keine Anmeldung.
+  test-coverage: done
+
+  # Gold
+  devices:
+    status: done
+    comment: Ein Dienst-Gerät „Recall“ für den Sensor.
+  diagnostics:
+    status: done
+    comment: Slots mit gemerktem/erwartetem/aktuellem Zustand und Einstellungen; sensible Attribute geschwärzt.
+  discovery-update-info:
+    status: exempt
+    comment: Nichts zu entdecken.
+  discovery:
+    status: exempt
+    comment: Nichts zu entdecken.
+  docs-data-update: done
+  docs-examples: done
+  docs-known-limitations: done
+  docs-supported-devices:
+    status: done
+    comment: Alle Domänen mit reproduce_state; Vergleichsregeln je Domäne im README.
+  docs-supported-functions: done
+  docs-troubleshooting: done
+  docs-use-cases: done
+  dynamic-devices:
+    status: exempt
+    comment: Genau ein Dienst-Gerät.
+  entity-category:
+    status: exempt
+    comment: Der einzige Sensor ist der Hauptwert der Integration.
+  entity-device-class:
+    status: exempt
+    comment: Für eine Anzahl gemerkter Zustände gibt es keine passende Geräteklasse.
+  entity-disabled-by-default:
+    status: exempt
+    comment: Nur ein Sensor, der gebraucht wird; große Attribute sind vom Recorder ausgenommen.
+  entity-translations: done
+  exception-translations: done
+  icon-translations: done
+  reconfiguration-flow:
+    status: exempt
+    comment: Nichts einzustellen.
+  repair-issues:
+    status: done
+    comment: Hinweis, solange die alte Integration Saver noch eingerichtet ist (verschwindet von selbst).
+  stale-devices:
+    status: exempt
+    comment: Nur das eigene Dienst-Gerät, es wird mit dem Eintrag entfernt.
+
+  # Platinum
+  async-dependency:
+    status: exempt
+    comment: Keine Bibliothek.
+  inject-websession:
+    status: exempt
+    comment: Keine HTTP-Verbindungen.
+  strict-typing: done

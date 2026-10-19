@@ -1,0 +1,13 @@
+{
+  "domain": "recall",
+  "name": "Recall",
+  "codeowners": ["@SH1FT-W"],
+  "config_flow": true,
+  "documentation": "https://github.com/SH1FT-W/recall",
+  "integration_type": "service",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/SH1FT-W/recall/issues",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "26.10.6"
+}

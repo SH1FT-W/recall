@@ -1,0 +1,61 @@
+save:
+  target:
+    entity: {}
+  fields:
+    slot:
+      default: default
+      example: apple_tv
+      selector:
+        text:
+    expires_after:
+      selector:
+        duration:
+    overwrite:
+      default: true
+      selector:
+        boolean:
+    tolerance:
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+          mode: box
+          unit_of_measurement: "%"
+restore:
+  # Kein `target`: Ohne Ziel gilt der ganze Slot – mit `target` zeigte der Editor fälschlich „Kein Ziel festgelegt“.
+  # `target:` (auch Bereich/Gerät/Label) funktioniert in YAML weiterhin.
+  fields:
+    entity_id:
+      selector:
+        entity:
+          multiple: true
+    slot:
+      default: default
+      example: apple_tv
+      selector:
+        text:
+    only_if_unchanged:
+      selector:
+        boolean:
+    forget:
+      selector:
+        boolean:
+    transition:
+      selector:
+        number:
+          min: 0
+          max: 300
+          step: 0.5
+          mode: box
+          unit_of_measurement: s
+forget:
+  fields:
+    entity_id:
+      selector:
+        entity:
+          multiple: true
+    slot:
+      example: apple_tv
+      selector:
+        text:

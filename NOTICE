@@ -1,0 +1,28 @@
+Recall for Home Assistant
+Copyright 2026 SH1FT-W
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Third-party material
+--------------------
+
+None. Recall is written from scratch and contains no code from other projects.
+
+Saver
+-----
+
+Recall is meant as a replacement for "Saver" by Piotr Machowski
+(https://github.com/PiotrMachowski/Home-Assistant-custom-components-Saver, MIT License).
+Only the idea of saving and restoring states is shared; no code from Saver is included.
+The README explains how to move automations from Saver to Recall.
+
+Tests
+-----
+
+Entity IDs, slot names and values in tests/ are made up.
+
+Affiliation
+-----------
+
+Recall is an independent project. It is not affiliated with, endorsed by or sponsored by
+Saver, its author, the Home Assistant project or the Open Home Foundation.

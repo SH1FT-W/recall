@@ -1,0 +1,14 @@
+is_saved:
+  target:
+    entity: {}
+  fields:
+    slot:
+      required: true
+      default: default
+      selector:
+        text:
+    unchanged:
+      required: true
+      default: false
+      selector:
+        boolean:

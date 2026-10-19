@@ -1,0 +1,38 @@
+{
+  "$comment": "Content of the README card pictures. Render with sh1ft-w.github.io/theme/v1/readme-images: node render.mjs <this repo> cards. The title image is built from tools/readme-title.html (see the comment there).",
+  "colors": {
+    "light": { "bg": "#FBF6F2", "bg2": "#F3EAE3", "ink": "#1E1410", "ink2": "#5C4B42", "ink3": "#8E7C72", "accentText": "#C9471A", "accent": "#FF7A45", "accent2": "#FFA77F",
+      "glow1": "rgba(255,122,69,0.16)", "glow2": "rgba(255,170,120,0.14)", "frame": "rgba(50,25,15,0.10)", "pillBg": "#ffffff", "pillLine": "rgba(50,25,15,0.08)", "win": "#100a08", "bar": "" },
+    "dark": { "bg": "#0C0907", "bg2": "#17110E", "ink": "#F6EFEA", "ink2": "rgba(228,214,205,0.84)", "ink3": "rgba(228,214,205,0.52)", "accentText": "#FF9668", "accent": "#FF7A45", "accent2": "#FFA77F",
+      "glow1": "rgba(255,122,69,0.22)", "glow2": "rgba(255,170,120,0.10)", "frame": "rgba(255,255,255,0.10)", "pillBg": "rgba(255,255,255,0.06)", "pillLine": "rgba(255,255,255,0.10)", "win": "#100a08", "bar": "" }
+  },
+  "fonts": {
+    "display": "\"Archivo\", -apple-system, system-ui, sans-serif",
+    "body": "\"Inter\", -apple-system, system-ui, sans-serif",
+    "mono": "\"JetBrains Mono\", ui-monospace, Menlo, monospace",
+    "google": "https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap"
+  },
+  "cards": {
+    "features": [
+      { "icon": "hand-back-right-outline", "title": "Knows when you took over", "text": "Recall learns the state the automation ends up in. Moved the blind or dimmed the light since? recall.restore leaves it alone." },
+      { "icon": "bookmark-multiple-outline", "title": "Named slots", "text": "Two automations on the same blind no longer overwrite each other. Slots even hand over to each other in any order." },
+      { "icon": "content-save-outline", "title": "Survives restarts", "text": "Stored in .storage/recall.snapshots, not in the attributes of an entity." },
+      { "icon": "movie-open-outline", "title": "Restores like a scene", "text": "Home Assistant's own reproduce_state brings back position and tilt, brightness and colour, climate targets and more. Optional light transition." },
+      { "icon": "timer-sand", "title": "Expiry", "text": "expires_after forgets a remembered state that was never restored, set per action or as a default." },
+      { "icon": "message-reply-text-outline", "title": "Answers and events", "text": "Every action returns what it did: restored, or skipped with a reason. Events for everything, plus the condition recall.is_saved." }
+    ],
+    "entities": [
+      { "icon": "bookmark-plus-outline", "title": "recall.save", "text": "Remember entities, devices, areas, floors or labels in a slot, with optional expiry, overwrite and tolerance." },
+      { "icon": "history", "title": "recall.restore", "text": "Put the slot back. Skips what was changed by hand, forgets afterwards, optional transition for lights." },
+      { "icon": "bookmark-remove-outline", "title": "recall.forget", "text": "Drop a whole slot or single entities without moving anything." },
+      { "icon": "check-decagram-outline", "title": "Condition recall.is_saved", "text": "True when every target is remembered in the slot, optionally only if nobody changed it." },
+      { "icon": "counter", "title": "Sensor", "text": "sensor.recall_saved_states counts remembered entities. The slots attribute shows saved, expected and changed by." },
+      { "icon": "cog-outline", "title": "Options", "text": "Default settings for restoring, detecting manual changes and expiry, plus a list of remembered states to forget." }
+    ],
+    "how": { "cols": 3, "items": [
+      { "icon": "bookmark-outline", "title": "1. Remember", "text": "recall.save stores the current state and registers the automation run that called it." },
+      { "icon": "timer-outline", "title": "2. Settle", "text": "Every change by that run restarts a quiet window. The calm state at the end is what the automation wanted." },
+      { "icon": "history", "title": "3. Restore or skip", "text": "Still as expected? Restore. Changed by someone else? Skip with the reason, or hand over to another slot." }
+    ] }
+  }
+}

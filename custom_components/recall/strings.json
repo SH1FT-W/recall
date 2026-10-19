@@ -1,0 +1,205 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Recall",
+        "description": "Recall remembers states with `recall.save` and puts them back with `recall.restore` – unless someone changed the device by hand in the meantime. No settings needed."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Recall is already set up."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "saved_states": {
+        "name": "Saved states",
+        "unit_of_measurement": "entities"
+      }
+    }
+  },
+  "issues": {
+    "saver_installed": {
+      "title": "Saver is still installed",
+      "description": "Recall replaces the Saver integration. Once all automations use `recall.save` / `recall.restore` instead of `saver.save_state` / `saver.restore_state`, delete the Saver integration and remove it from HACS. This notice disappears by itself."
+    }
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "Recall is not set up."
+    },
+    "no_entities": {
+      "message": "No entities selected to remember."
+    },
+    "nothing_saved": {
+      "message": "Nothing remembered: {entity_id} does not exist or is unavailable."
+    },
+    "forget_nothing": {
+      "message": "Choose a slot, entities or both to forget."
+    },
+    "restore_failed": {
+      "message": "Restoring failed: {error}"
+    }
+  },
+  "services": {
+    "save": {
+      "name": "Remember state",
+      "description": "Remembers the current state of entities in a slot so it can be restored later.",
+      "fields": {
+        "slot": {
+          "name": "Slot",
+          "description": "Name of the memory slot. Use different slots for different automations so they do not overwrite each other."
+        },
+        "expires_after": {
+          "name": "Expires after",
+          "description": "Forget the remembered state automatically after this time. Empty = integration setting, 0 = never."
+        },
+        "overwrite": {
+          "name": "Overwrite",
+          "description": "Replace a state already remembered in this slot. Off keeps the first (original) state."
+        },
+        "tolerance": {
+          "name": "Tolerance",
+          "description": "How far position, tilt, brightness, fan speed or volume may drift (percentage points) before it counts as changed by hand. Empty = integration setting."
+        }
+      }
+    },
+    "restore": {
+      "name": "Restore state",
+      "description": "Restores the remembered state. Skips entities someone changed by hand since then.",
+      "fields": {
+        "entity_id": {
+          "name": "Entities",
+          "description": "Restore only these entities. Empty = everything remembered in the slot. In YAML, `target` with areas, devices or labels works too."
+        },
+        "slot": {
+          "name": "Slot",
+          "description": "Name of the memory slot."
+        },
+        "only_if_unchanged": {
+          "name": "Only if unchanged",
+          "description": "Skip entities that were changed by hand or by another automation after the automation moved them. Empty = integration setting."
+        },
+        "forget": {
+          "name": "Forget afterwards",
+          "description": "Remove the remembered state after restoring (also when skipped because it was changed by hand). Empty = integration setting."
+        },
+        "transition": {
+          "name": "Transition",
+          "description": "Fade time for lights in seconds."
+        }
+      }
+    },
+    "forget": {
+      "name": "Forget state",
+      "description": "Removes remembered states without restoring them. Without a slot all slots are affected, without entities the whole slot.",
+      "fields": {
+        "entity_id": {
+          "name": "Entities",
+          "description": "Forget only these entities. Empty = the whole slot. In YAML, `target` with areas, devices or labels works too."
+        },
+        "slot": {
+          "name": "Slot",
+          "description": "Name of the memory slot."
+        }
+      }
+    }
+  },
+  "conditions": {
+    "is_saved": {
+      "name": "State is remembered",
+      "description": "Tests if all target entities have a remembered state in a slot.",
+      "fields": {
+        "slot": {
+          "name": "Slot",
+          "description": "Name of the memory slot."
+        },
+        "unchanged": {
+          "name": "Only if unchanged",
+          "description": "Also require that nobody changed the entities by hand since the automation moved them."
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Recall",
+        "menu_options": {
+          "settings": "Default settings",
+          "saved": "Remembered states"
+        }
+      },
+      "settings": {
+        "title": "Default settings",
+        "description": "These values apply whenever an automation does not set the field itself in `recall.save` or `recall.restore`. Changes take effect right away, no restart needed.",
+        "sections": {
+          "restore": {
+            "name": "Restoring",
+            "description": "What happens when a remembered state is restored.",
+            "data": {
+              "only_if_unchanged": "Respect manual changes",
+              "forget": "Forget after restoring"
+            },
+            "data_description": {
+              "only_if_unchanged": "On: if someone changed the device after the automation (by hand, in the app or by another automation), it stays as it is. Off: always put it back.",
+              "forget": "On: the remembered state is used once and then deleted. Off: it stays remembered and can be restored again."
+            }
+          },
+          "detection": {
+            "name": "Detecting manual changes",
+            "description": "Fine-tuning; the defaults suit most blinds and lights.",
+            "data": {
+              "tolerance": "Tolerance",
+              "settle_quiet": "Calm time",
+              "settle_wait": "Wait when nothing happens",
+              "settle_max": "Longest wait"
+            },
+            "data_description": {
+              "tolerance": "How much position, tilt, brightness, fan speed or volume may differ without counting as a manual change (e.g. a blind ending at 41 % instead of 40 %).",
+              "settle_quiet": "After the automation moves a device, it must stay still this long. That end position is what the automation wanted.",
+              "settle_wait": "If the device does not change at all after remembering, this is how long Recall waits before taking the current state as wanted.",
+              "settle_max": "Devices that never come to rest are fixed after this time at the latest."
+            }
+          },
+          "expiry": {
+            "name": "Expiry",
+            "description": "Remembered states that are never restored (e.g. after a power cut) are forgotten automatically.",
+            "data": {
+              "expires_after": "Forget after"
+            },
+            "data_description": {
+              "expires_after": "Empty or 0 = never forget automatically. An automation can set its own value with “expires after”."
+            }
+          }
+        }
+      },
+      "saved": {
+        "title": "Remembered states",
+        "description": "Currently remembered (⏳ = forgotten at, ✋ = changed by hand since then, ↪ = will be handed over to that slot):\n\n{overview}\n\nTick the slots to forget. Nothing is moved.",
+        "data": {
+          "slots": "Forget slots"
+        },
+        "data_description": {
+          "slots": "The selected slots are deleted without restoring."
+        }
+      }
+    },
+    "abort": {
+      "not_loaded": "Recall is not loaded.",
+      "nothing_saved": "Nothing is remembered right now."
+    }
+  },
+  "selector": {
+    "reason": {
+      "options": {
+        "manual": "Changed by hand",
+        "moving": "Moving",
+        "unavailable": "Unavailable",
+        "not_saved": "Not remembered",
+        "handed_over": "Handed over to another slot",
+        "unsupported": "Cannot be restored"
+      }
+    }
+  }
+}
