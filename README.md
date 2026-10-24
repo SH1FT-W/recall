@@ -1,6 +1,9 @@
 <div align="center">
 
-<img src="docs/images/readme-title.webp" alt="Recall for Home Assistant: remember a state, restore it, unless you changed it." />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-title-dark.webp" />
+  <img src="docs/images/readme-title-light.webp" alt="Recall: Remember a state. Restore it, unless you changed it. The feature overview of the project page in a window." />
+</picture>
 
 <p>Remember a state, restore it later, unless someone changed it by hand in the meantime.<br/>
 A modern replacement for <b>Saver</b>.</p>
@@ -28,15 +31,21 @@ Many automations change something for a while and put it back afterwards: lights
 <a id="features"></a>
 ## Features
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-cards-features-dark.png" />
-  <img src="docs/images/readme-cards-features-light.png" alt="Knows when you took over: Recall learns the state the automation ends up in and leaves a device alone that was moved since. Named slots: two automations on the same blind no longer overwrite each other, slots hand over in any order. Survives restarts: stored in .storage/recall.snapshots. Restores like a scene: Home Assistant's own reproduce_state, optional light transition. Expiry: expires_after forgets a state that was never restored. Answers and events: every action returns what it did, events for everything, plus the condition recall.is_saved." />
-</picture>
+<!-- cards:features -->
+<table>
+<tr><td width="34" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/hand-back-right-outline-dark.svg"><img src="docs/images/icons/hand-back-right-outline-light.svg" width="26" height="26" alt=""></picture></td><td width="46%" valign="top"><b>Knows when you took over</b><br>Recall learns the state the automation ends up in. Dimmed the light, moved the blind or turned up the heating since? recall.restore leaves it alone.</td><td width="34" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/bookmark-multiple-outline-dark.svg"><img src="docs/images/icons/bookmark-multiple-outline-light.svg" width="26" height="26" alt=""></picture></td><td width="46%" valign="top"><b>Named slots</b><br>Two automations on the same device no longer overwrite each other. Slots even hand over to each other in any order.</td></tr>
+<tr><td width="34" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/content-save-outline-dark.svg"><img src="docs/images/icons/content-save-outline-light.svg" width="26" height="26" alt=""></picture></td><td width="46%" valign="top"><b>Survives restarts</b><br>Stored in .storage/recall.snapshots, not in the attributes of an entity.</td><td width="34" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/movie-open-outline-dark.svg"><img src="docs/images/icons/movie-open-outline-light.svg" width="26" height="26" alt=""></picture></td><td width="46%" valign="top"><b>Restores like a scene</b><br>Home Assistant's own reproduce_state brings back position and tilt, brightness and colour, climate targets and more. Optional light transition.</td></tr>
+<tr><td width="34" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/timer-sand-dark.svg"><img src="docs/images/icons/timer-sand-light.svg" width="26" height="26" alt=""></picture></td><td width="46%" valign="top"><b>Expiry</b><br>expires_after forgets a remembered state that was never restored, set per action or as a default.</td><td width="34" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/message-reply-text-outline-dark.svg"><img src="docs/images/icons/message-reply-text-outline-light.svg" width="26" height="26" alt=""></picture></td><td width="46%" valign="top"><b>Answers and events</b><br>Every action returns what it did: restored, or skipped with a reason. Events for everything, plus the condition recall.is_saved.</td></tr>
+</table>
+<!-- /cards:features -->
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-cards-entities-dark.png" />
-  <img src="docs/images/readme-cards-entities-light.png" alt="recall.save remembers entities, devices, areas, floors or labels in a slot. recall.restore puts the slot back and skips what was changed by hand. recall.forget drops a slot or single entities. Condition recall.is_saved. Sensor recall_saved_states with a slots attribute. Options for default settings and remembered states." />
-</picture>
+<!-- cards:entities -->
+<table>
+<tr><td width="34" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/bookmark-plus-outline-dark.svg"><img src="docs/images/icons/bookmark-plus-outline-light.svg" width="26" height="26" alt=""></picture></td><td width="46%" valign="top"><b>recall.save</b><br>Remember entities, devices, areas, floors or labels in a slot, with optional expiry, overwrite and tolerance.</td><td width="34" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/history-dark.svg"><img src="docs/images/icons/history-light.svg" width="26" height="26" alt=""></picture></td><td width="46%" valign="top"><b>recall.restore</b><br>Put the slot back. Skips what was changed by hand, forgets afterwards, optional transition for lights.</td></tr>
+<tr><td width="34" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/bookmark-remove-outline-dark.svg"><img src="docs/images/icons/bookmark-remove-outline-light.svg" width="26" height="26" alt=""></picture></td><td width="46%" valign="top"><b>recall.forget</b><br>Drop a whole slot or single entities without moving anything.</td><td width="34" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/check-decagram-outline-dark.svg"><img src="docs/images/icons/check-decagram-outline-light.svg" width="26" height="26" alt=""></picture></td><td width="46%" valign="top"><b>Condition recall.is_saved</b><br>True when every target is remembered in the slot, optionally only if nobody changed it.</td></tr>
+<tr><td width="34" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/counter-dark.svg"><img src="docs/images/icons/counter-light.svg" width="26" height="26" alt=""></picture></td><td width="46%" valign="top"><b>Sensor</b><br>sensor.recall_saved_states counts remembered entities. The slots attribute shows saved, expected and changed by.</td><td width="34" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/cog-outline-dark.svg"><img src="docs/images/icons/cog-outline-light.svg" width="26" height="26" alt=""></picture></td><td width="46%" valign="top"><b>Options</b><br>Default settings for restoring, detecting manual changes and expiry, plus a list of remembered states to forget.</td></tr>
+</table>
+<!-- /cards:entities -->
 
 <a id="actions"></a>
 ## Actions
@@ -336,10 +345,11 @@ restored. While Saver is still set up, Recall shows a repair notice as a reminde
 
 ## How it works
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-cards-how-dark.png" />
-  <img src="docs/images/readme-cards-how-light.png" alt="1. Remember: recall.save stores the current state and registers the automation run that called it. 2. Settle: every change by that run restarts a quiet window, the calm state at the end is what the automation wanted. 3. Restore or skip: still as expected, restore; changed by someone else, skip with the reason or hand over to another slot." />
-</picture>
+<!-- cards:how -->
+<table>
+<tr><td width="34" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/bookmark-outline-dark.svg"><img src="docs/images/icons/bookmark-outline-light.svg" width="26" height="26" alt=""></picture></td><td width="29%" valign="top"><b>1. Remember</b><br>recall.save stores the current state and registers the automation run that called it.</td><td width="34" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/timer-outline-dark.svg"><img src="docs/images/icons/timer-outline-light.svg" width="26" height="26" alt=""></picture></td><td width="29%" valign="top"><b>2. Settle</b><br>Every change by that run restarts a quiet window. The calm state at the end is what the automation wanted.</td><td width="34" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/history-dark.svg"><img src="docs/images/icons/history-light.svg" width="26" height="26" alt=""></picture></td><td width="29%" valign="top"><b>3. Restore or skip</b><br>Still as expected? Restore. Changed by someone else? Skip with the reason, or hand over to another slot.</td></tr>
+</table>
+<!-- /cards:how -->
 
 Recall keeps one state listener for all remembered entities and one timer for settling and expiry. Restoring goes through Home Assistant's `async_reproduce_state`, the same path scenes use, with the context of the calling automation. Details, in German, are in [`CLAUDE.md`](CLAUDE.md).
 
