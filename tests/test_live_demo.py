@@ -5,9 +5,10 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from typing import Any
 
+from awesomeversion import AwesomeVersion
 from homeassistant.components.demo.cover import DemoCover
 from homeassistant.config_entries import ConfigEntry, ConfigFlow
-from homeassistant.const import Platform
+from homeassistant.const import Platform, __version__ as HA_VERSION
 from homeassistant.core import Context, HomeAssistant
 import pytest
 from pytest_homeassistant_custom_component.common import (
@@ -23,6 +24,8 @@ from common import call, wait
 from custom_components.recall.const import DOMAIN
 
 HALL = "cover.hall_window"
+# From HA 2026.11 async_setup_entry returns None instead of a boolean
+NEW_SETUP_RESULT = AwesomeVersion(HA_VERSION) >= AwesomeVersion("2026.11.0b0")
 
 
 @pytest.fixture
@@ -32,9 +35,10 @@ async def demo(hass: HomeAssistant) -> AsyncIterator[None]:
     async def setup_cover(hass: HomeAssistant, entry: ConfigEntry, add_entities: Any) -> None:
         add_entities([DemoCover(hass, "cover_2", "Hall Window", 10)])
 
-    async def setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    async def setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool | None:
         await hass.config_entries.async_forward_entry_setups(entry, [Platform.COVER])
-        return True
+        # HA 2026.11 expects None from a built-in integration (a boolean raises), older HA requires True
+        return None if NEW_SETUP_RESULT else True
 
     mock_integration(hass, MockModule("fake_demo", async_setup_entry=setup_entry))
     mock_platform(hass, "fake_demo.config_flow")

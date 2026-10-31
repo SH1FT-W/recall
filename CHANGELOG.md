@@ -1,5 +1,12 @@
 # Changelog
 
+## 26.10.7 – 31.10.2026
+
+- Bereit für HA 2026.11: Tests laufen gegen 2026.9.3 und 2026.11.0b1. Die Hilfs-Integration der Demo-Jalousie in
+  `tests/test_live_demo.py` liefert in `async_setup_entry` ab HA 2026.11 `None` statt `True` (eingebaute
+  Integrationen dürfen dort keinen Wahrheitswert mehr zurückgeben). Recall selbst bleibt unverändert.
+- `docs/ha-annahmen.md`: worauf sich Recall bei Home Assistant verlässt und welcher Test es absichert.
+
 ## 26.10.6 – 19.10.2026
 
 - **Öffentlich** (SH1FT-W/recall): Lizenz Apache 2.0, `NOTICE` (Saver als Vorbild, kein Code übernommen), neue
