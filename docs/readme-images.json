@@ -92,6 +92,12 @@
         "text": "Drop a whole slot or single entities without moving anything."
       },
       {
+        "icon": "palette",
+        "title": "recall.create_scene",
+        "ver": "26.11.2",
+        "text": "Turn a slot into a scene: always scene.recall_&lt;name&gt;, so it never collides with your own scenes or Hue & Co. Dynamic until restart, the slot stays as it is."
+      },
+      {
         "icon": "check-decagram-outline",
         "title": "Condition recall.is_saved",
         "text": "True when every target is remembered in the slot, optionally only if nobody changed it."
