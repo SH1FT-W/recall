@@ -39,6 +39,15 @@
     },
     "restore_failed": {
       "message": "Restoring failed: {error}"
+    },
+    "scene_unavailable": {
+      "message": "Scenes are not set up in Home Assistant (scene.create is missing)."
+    },
+    "scene_empty": {
+      "message": "Slot {slot} holds nothing that can go into a scene."
+    },
+    "scene_exists": {
+      "message": "{entity_id} already exists and was not created by scene.create. Choose another scene ID."
     }
   },
   "services": {
@@ -101,6 +110,24 @@
         "slot": {
           "name": "Slot",
           "description": "Name of the memory slot."
+        }
+      }
+    },
+    "create_scene": {
+      "name": "Create scene from slot",
+      "description": "Creates a scene scene.recall_… from the states remembered in a slot, like scene.create. The scene lives until Home Assistant restarts and is not written to scenes.yaml; the slot stays as it is.",
+      "fields": {
+        "entity_id": {
+          "name": "Entities",
+          "description": "Only these entities. Empty = everything remembered in the slot."
+        },
+        "slot": {
+          "name": "Slot",
+          "description": "Name of the memory slot."
+        },
+        "scene_id": {
+          "name": "Scene ID",
+          "description": "Object ID of the scene (lower case, digits, underscores), always prefixed with recall_. Empty = the slot name."
         }
       }
     }

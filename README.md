@@ -95,6 +95,32 @@ manual change (`changed_by: automation`). Works with any number of slots in any 
 Removes remembered states without restoring. Slot only → whole slot; `entity_id`/`target` only → these entities in
 every slot. An unknown slot answers `skipped: [{slot, reason: not_saved}]`.
 
+### `recall.create_scene`
+
+Creates a scene from a slot, the same way as `scene.create`: `scene.recall_<scene_id>` with the remembered state and the
+attributes a restore would use (position/tilt, brightness/colour, temperature …). The scene is dynamic: it lasts
+until Home Assistant restarts and is not written to `scenes.yaml`. The slot stays as it is (nothing is forgotten,
+nothing moves). Calling it again with the same `scene_id` replaces the scene. The `recall_` prefix keeps these
+scenes apart from your own and from those of other integrations (Hue & Co.).
+
+| Field | Default | |
+|---|---|---|
+| `entity_id` (or `target`) | all of the slot | Only these entities |
+| `slot` | `default` | |
+| `scene_id` | slot name as a slug | Object ID of the scene, always prefixed with `recall_` (not doubled), e.g. `before_movie` → `scene.recall_before_movie` |
+
+Response: `{slot, scene, entity_id: [...], skipped: [{entity_id, reason, detail, changed_by}]}` with reason
+`not_saved` or `unsupported` (domains Home Assistant cannot restore). Fails if nothing in the slot fits into a scene,
+if the `scene` integration is not loaded, or if a scene from `scenes.yaml` already uses that `recall_…` ID.
+
+```yaml
+actions:
+  - action: recall.create_scene
+    data:
+      slot: apple_tv
+      scene_id: before_movie
+```
+
 ### Condition `recall.is_saved`
 
 True if every target entity has a remembered state in the slot; with `unchanged: true` also nobody changed it (a

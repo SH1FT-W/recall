@@ -1,5 +1,15 @@
 # Changelog
 
+## 26.11.2 – 02.11.2026
+
+- Neue Aktion `recall.create_scene`: erstellt aus einem Slot eine Szene über `scene.create` (dynamisch,
+  bis zum Neustart, nichts in `scenes.yaml`). Eigener Namensraum: immer `scene.recall_<scene_id>` (Präfix wird nicht
+  verdoppelt), damit nichts mit eigenen Szenen oder Hue & Co. kollidiert. Felder `slot`, `scene_id` (leer =
+  Slot-Name als Slug) und `entity_id`/`target`. Übernommen werden Zustand und dieselben bereinigten Attribute wie beim
+  Wiederherstellen; Domänen ohne `reproduce_state` und nicht gemerkte Entitäten stehen in `skipped`. Der Slot bleibt
+  unverändert. Fehler, wenn nichts passt, Szenen nicht geladen sind oder eine Szene aus `scenes.yaml` die `recall_…`-ID
+  schon belegt (`scene.create` würde dann nur warnen).
+
 ## 26.11.1 – 02.11.2026
 
 - Umbenannte Entität (neue Entity-ID) behält ihre gemerkten Zustände: Recall zieht sie in allen Slots auf die neue

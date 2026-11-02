@@ -59,3 +59,19 @@ forget:
       example: apple_tv
       selector:
         text:
+create_scene:
+  # No `target` for the same reason as restore: without entities the whole slot is used.
+  fields:
+    entity_id:
+      selector:
+        entity:
+          multiple: true
+    slot:
+      default: default
+      example: apple_tv
+      selector:
+        text:
+    scene_id:
+      example: before_movie
+      selector:
+        text:

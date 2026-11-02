@@ -44,6 +44,7 @@ ATTR_TOLERANCE: Final = "tolerance"
 ATTR_ONLY_IF_UNCHANGED: Final = "only_if_unchanged"
 ATTR_FORGET: Final = "forget"
 ATTR_TRANSITION: Final = "transition"
+ATTR_SCENE_ID: Final = "scene_id"
 
 EVENT_SAVED: Final = f"{DOMAIN}_saved"
 EVENT_RESTORED: Final = f"{DOMAIN}_restored"

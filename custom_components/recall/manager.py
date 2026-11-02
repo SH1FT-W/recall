@@ -414,6 +414,31 @@ class RecallManager:
             self._async_changed()
         return {ATTR_SLOT: slot, "saved": saved, "kept": kept, "missing": missing}
 
+    async def async_scene_states(
+        self, slot: str, entity_ids: list[str] | None
+    ) -> tuple[dict[str, StateDict], list[dict[str, Any]]]:
+        """Saved states of a slot in `scene.create` form ({entity_id: {state, **attributes}}), plus what was skipped.
+
+        Uses the same cleaned attributes as a restore; domains Home Assistant cannot reproduce are skipped.
+        The slot itself stays untouched.
+        """
+        snaps = self.slots.get(slot, {})
+        targets = entity_ids if entity_ids is not None else list(snaps)
+        for domain in {e.split(".", 1)[0] for e in targets if e in snaps}:
+            await self._async_check_supported(domain)
+        states: dict[str, StateDict] = {}
+        skipped: list[dict[str, Any]] = []
+        for entity_id in targets:
+            snap = snaps.get(entity_id)
+            if snap is None:
+                skipped.append(_skip(entity_id, REASON_NOT_SAVED))
+            elif not self._supported.get(snap.domain, False):
+                skipped.append(_skip(entity_id, REASON_UNSUPPORTED, snap.domain))
+            else:
+                attributes = restorable_attributes(snap.domain, snap.saved.get("attributes", {}))
+                states[entity_id] = {**attributes, "state": snap.saved["state"]}
+        return states, skipped
+
     async def async_restore(
         self,
         slot: str,

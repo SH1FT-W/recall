@@ -39,6 +39,15 @@
     },
     "restore_failed": {
       "message": "Wiederherstellen fehlgeschlagen: {error}"
+    },
+    "scene_unavailable": {
+      "message": "Szenen sind in Home Assistant nicht eingerichtet (scene.create fehlt)."
+    },
+    "scene_empty": {
+      "message": "Slot {slot} enthält nichts, was in eine Szene passt."
+    },
+    "scene_exists": {
+      "message": "{entity_id} gibt es schon, und sie stammt nicht von scene.create. Bitte eine andere Szenen-ID wählen."
     }
   },
   "services": {
@@ -101,6 +110,24 @@
         "slot": {
           "name": "Slot",
           "description": "Name des Merk-Slots."
+        }
+      }
+    },
+    "create_scene": {
+      "name": "Szene aus Slot erstellen",
+      "description": "Erstellt aus den in einem Slot gemerkten Zuständen eine Szene scene.recall_…, wie scene.create. Die Szene gilt bis zum nächsten Neustart von Home Assistant und landet nicht in scenes.yaml; der Slot bleibt unverändert.",
+      "fields": {
+        "entity_id": {
+          "name": "Entitäten",
+          "description": "Nur diese Entitäten. Leer = alles, was im Slot gemerkt ist."
+        },
+        "slot": {
+          "name": "Slot",
+          "description": "Name des Merk-Slots."
+        },
+        "scene_id": {
+          "name": "Szenen-ID",
+          "description": "Objekt-ID der Szene (Kleinbuchstaben, Ziffern, Unterstriche), immer mit Präfix recall_. Leer = der Slot-Name."
         }
       }
     }

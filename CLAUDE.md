@@ -42,7 +42,8 @@ Versionen = Kalender-Schema `YY.M.N` (Jahr, Monat ohne Null, N = laufendes Relea
 - Zustands-Listener speichert/schreibt den Sensor nur, wenn sich ein Feld aus `Snapshot.as_dict()` ändert
   (`last_change` allein plant nur den Termin neu). Entladen: `async_stop` vor `async_flush`, danach ist
   `_async_changed` stumm (`_stopped`).
-- `services.py` (save/restore/forget mit Antwortdaten, in `async_setup`), `condition.py` + `conditions.yaml`
+- `services.py` (save/restore/forget/create_scene mit Antwortdaten, in `async_setup`; `create_scene` ruft
+  `scene.create` mit `manager.async_scene_states`, immer `scene.recall_<id>`, Slot bleibt), `condition.py` + `conditions.yaml`
   (`recall.is_saved`), `sensor.py` (ein Sensor, Attribut `slots` nicht im Recorder), Reparatur-Hinweis
   `saver_installed` solange Saver eingerichtet ist (`__init__.py`, reagiert auf Eintragsänderungen).
 - Logo: Variante B „Lesezeichen“ in `brand/`; Quellen + Erzeuger in `docs/logo-varianten/`

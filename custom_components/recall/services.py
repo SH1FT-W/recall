@@ -1,4 +1,4 @@
-"""Aktionen recall.save / recall.restore / recall.forget (in async_setup registriert, mit Antwortdaten)."""
+"""Actions recall.save / restore / forget / create_scene (registered in async_setup, with response data)."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ from homeassistant.const import ATTR_ENTITY_ID
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse, callback
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import config_validation as cv
+from homeassistant.util import slugify
 import voluptuous as vol
 
 from .const import (
@@ -15,6 +16,7 @@ from .const import (
     ATTR_FORGET,
     ATTR_ONLY_IF_UNCHANGED,
     ATTR_OVERWRITE,
+    ATTR_SCENE_ID,
     ATTR_SLOT,
     ATTR_TOLERANCE,
     ATTR_TRANSITION,
@@ -29,6 +31,11 @@ if TYPE_CHECKING:
 SERVICE_SAVE = "save"
 SERVICE_RESTORE = "restore"
 SERVICE_FORGET = "forget"
+SERVICE_CREATE_SCENE = "create_scene"
+
+SCENE_DOMAIN = "scene"
+SCENE_SERVICE_CREATE = "create"
+SCENE_PREFIX = f"{DOMAIN}_"
 
 SLOT = vol.All(cv.string, vol.Strip, vol.Length(min=1, max=64))
 
@@ -54,6 +61,13 @@ FORGET_SCHEMA = vol.Schema(
     {
         **cv.ENTITY_SERVICE_FIELDS,
         vol.Optional(ATTR_SLOT): SLOT,
+    }
+)
+CREATE_SCENE_SCHEMA = vol.Schema(
+    {
+        **cv.ENTITY_SERVICE_FIELDS,
+        vol.Optional(ATTR_SLOT, default=DEFAULT_SLOT): SLOT,
+        vol.Optional(ATTR_SCENE_ID): cv.slug,
     }
 )
 
@@ -120,9 +134,45 @@ def async_register_services(hass: HomeAssistant) -> None:
         result: dict[str, Any] = manager.async_forget(slot, entity_ids, context=call.context)
         return result
 
+    async def create_scene(call: ServiceCall) -> ServiceResponse:
+        manager = get_manager(hass)
+        slot = call.data[ATTR_SLOT]
+        if not hass.services.has_service(SCENE_DOMAIN, SCENE_SERVICE_CREATE):
+            raise ServiceValidationError(translation_domain=DOMAIN, translation_key="scene_unavailable")
+        states, skipped = await manager.async_scene_states(slot, _targets(hass, call))
+        if not states:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN, translation_key="scene_empty", translation_placeholders={ATTR_SLOT: slot}
+            )
+        # Own namespace: every scene from Recall is scene.recall_<id>, so it never collides with Hue & Co.
+        scene_id = call.data.get(ATTR_SCENE_ID) or slugify(slot)
+        if not scene_id.startswith(SCENE_PREFIX):
+            scene_id = f"{SCENE_PREFIX}{scene_id}"
+        scene_entity = f"{SCENE_DOMAIN}.{scene_id}"
+        before = hass.states.get(scene_entity)
+        await hass.services.async_call(
+            SCENE_DOMAIN,
+            SCENE_SERVICE_CREATE,
+            {ATTR_SCENE_ID: scene_id, "entities": states},
+            blocking=True,
+            context=call.context,
+        )
+        # scene.create only logs a warning when a scene from scenes.yaml (e.g. a hand-made recall_…) already uses
+        # this id and keeps it.
+        # A created (or replaced) scene always writes a new state object.
+        created = hass.states.get(scene_entity)
+        if created is None or created is before:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="scene_exists",
+                translation_placeholders={ATTR_ENTITY_ID: scene_entity},
+            )
+        return {ATTR_SLOT: slot, "scene": scene_entity, ATTR_ENTITY_ID: sorted(states), "skipped": skipped}
+
     for name, handler, schema in (
         (SERVICE_SAVE, save, SAVE_SCHEMA),
         (SERVICE_RESTORE, restore, RESTORE_SCHEMA),
         (SERVICE_FORGET, forget, FORGET_SCHEMA),
+        (SERVICE_CREATE_SCENE, create_scene, CREATE_SCENE_SCHEMA),
     ):
         hass.services.async_register(DOMAIN, name, handler, schema=schema, supports_response=SupportsResponse.OPTIONAL)

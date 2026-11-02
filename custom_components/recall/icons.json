@@ -13,7 +13,8 @@
   "services": {
     "save": { "service": "mdi:bookmark-plus" },
     "restore": { "service": "mdi:history" },
-    "forget": { "service": "mdi:bookmark-remove" }
+    "forget": { "service": "mdi:bookmark-remove" },
+    "create_scene": { "service": "mdi:palette" }
   },
   "conditions": {
     "is_saved": { "condition": "mdi:bookmark-check" }
