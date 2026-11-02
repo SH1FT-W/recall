@@ -668,12 +668,33 @@ class RecallManager:
 
     @callback
     def _registry_filter(self, event_data: er.EventEntityRegistryUpdatedData) -> bool:
-        return event_data["action"] == "remove" and event_data["entity_id"] in self._tracked
+        if event_data["action"] == "remove":
+            return event_data["entity_id"] in self._tracked
+        # Rename: HA sends "update" with old_entity_id (only set when the entity_id changed)
+        return event_data["action"] == "update" and event_data.get("old_entity_id") in self._tracked
 
     @callback
     def _async_on_registry(self, event: Event[er.EventEntityRegistryUpdatedData]) -> None:
-        """Entität gelöscht: überall vergessen (sie kommt so nicht wieder)."""
-        self.async_forget(None, [event.data["entity_id"]], reason="entity_removed")
+        """Entity removed: forget it everywhere. Entity renamed: move its snapshots to the new entity_id."""
+        data = event.data
+        if data["action"] == "remove":
+            self.async_forget(None, [data["entity_id"]], reason="entity_removed")
+            return
+        if data["action"] == "update" and isinstance(old := data.get("old_entity_id"), str):
+            self._async_rename(old, data["entity_id"])
+
+    @callback
+    def _async_rename(self, old: str, new: str) -> None:
+        moved = False
+        for snaps in self.slots.values():
+            snap = snaps.pop(old, None)
+            if snap is None:
+                continue
+            snap.entity_id = new
+            snaps[new] = snap
+            moved = True
+        if moved:
+            self._async_changed()  # saves and moves the state listener to the new entity_id
 
     @callback
     def _async_tick(self, now: datetime) -> None:

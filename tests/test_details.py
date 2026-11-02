@@ -137,6 +137,35 @@ async def test_removed_entity_is_forgotten(hass: HomeAssistant, home: FakeHome, 
     assert {e.data["reason"] for e in forgotten} == {"entity_removed"}
 
 
+async def test_renamed_entity_moves_slot(
+    hass: HomeAssistant, home: FakeHome, setup, hass_storage: dict[str, Any], freezer
+) -> None:
+    """Renaming an entity keeps its saved state under the new entity_id (was stuck under the old one)."""
+    forgotten = async_capture_events(hass, "recall_forgotten")
+    reg = er.async_get(hass)
+    old = reg.async_get_or_create("cover", "test", "awning", suggested_object_id="awning").entity_id
+    hass.states.async_set(old, "open", {"current_position": 100})
+    await call(hass, "save", entity_id=[old, LIGHT], slot="a")
+    await call(hass, "save", entity_id=old, slot="b")
+    await call(hass, "save", entity_id=LIGHT, slot="c")
+    new = "cover.terrace_awning"
+    reg.async_update_entity(old, new_entity_id=new)
+    hass.states.async_remove(old)
+    hass.states.async_set(new, "open", {"current_position": 100})
+    await hass.async_block_till_done()
+    manager = setup.runtime_data
+    assert set(manager.slots["a"]) == {new, LIGHT} and set(manager.slots["b"]) == {new}
+    assert set(manager.slots["c"]) == {LIGHT}
+    snap = manager.get("b", new)
+    assert snap is not None and snap.entity_id == new
+    assert forgotten == []
+    await wait(hass, freezer, 5)
+    assert set(hass_storage[STORAGE_KEY]["data"]["slots"]["b"]) == {new}
+    # The new entity_id is watched and restoring finds the device instead of reporting it unavailable
+    result = await call(hass, "restore", slot="b")
+    assert result["skipped"] == [] and result["restored"] == [new]
+
+
 async def test_changed_while_down_is_unknown(hass: HomeAssistant, home: FakeHome, setup, freezer) -> None:
     await automation(hass, 40)
     await wait(hass, freezer, 16)

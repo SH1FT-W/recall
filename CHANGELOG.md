@@ -1,5 +1,11 @@
 # Changelog
 
+## 26.11.1 – 02.11.2026
+
+- Umbenannte Entität (neue Entity-ID) behält ihre gemerkten Zustände: Recall zieht sie in allen Slots auf die neue
+  ID um und speichert. Bisher blieben sie unter der alten ID liegen, und das Wiederherstellen meldete die Entität
+  immer als „unavailable“.
+
 ## 26.10.7 – 31.10.2026
 
 - Bereit für HA 2026.11: Tests laufen gegen 2026.9.3 und 2026.11.0b1. Die Hilfs-Integration der Demo-Jalousie in
