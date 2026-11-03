@@ -10,42 +10,34 @@ andere Domänen nur in den Tests.
 - Lokal committen ok, Push und Releases nur nach Rückfrage. Prod nur auf ausdrücklichen Wunsch (nichts kopieren, kein
   Neustart, keine Automationen umstellen). Updates kommen über HACS (GitHub-Release mit derselben Nummer wie
   `manifest.json`, ohne „v“).
-
-Jede Änderung = neue Version in `manifest.json` + CHANGELOG (+ Versions-Badge im README).
-Versionen = Kalender-Schema `YY.M.N` (Jahr, Monat ohne Null, N = laufendes Release im Monat ab 1; ab 26.10.x, kein X.Y.Z mehr): `tools/next-version` rechnet die nächste aus (zählt nur echte, veröffentlichte GitHub-Releases des Monats, auch alte X.Y.Z, bloße Tags nicht; ohne Release im Monat → .1; jedes Release als GitHub-Release veröffentlichen). Tag/Release-Titel = genau diese Nummer ohne „v“.
+- Jede Änderung = neue Version in `manifest.json` + CHANGELOG (die Versions-Badge im README liest die manifest.json
+  selbst). Versionen über `tools/next-version` (globale Regeln).
+- `.venv` im Repo ist auch die Test-venv anderer Repos (z. B. pulse): nicht löschen oder auf andere Pakete umbauen.
 
 ## Aufbau
 
-- `manager.py` = Herzstück (`RecallManager`, `Snapshot`): Slots `{slot: {entity_id: Snapshot}}`, Speicher
-  `.storage/recall.snapshots` (`RecallStore`, Format nur über Minor-Version ändern, `Snapshot.from_dict` füllt
-  fehlende Felder), ein Zustands-Listener für alle gemerkten Entitäten, ein Termin (`_async_tick`) für Beruhigen und
-  Ablauf. Wiederherstellen über `async_reproduce_state` (wie Szenen) mit dem Kontext des Aufrufs.
-- Handbetrieb: nach `save` **Beruhigen** (jede Änderung → 15 s Ruhefenster neu, opening/closing nie fertig, ohne
-  Änderung 60 s, spätestens 10 min) → **erwarteter Zustand**. Eigene Änderungen = Kontext-ID (oder parent_id) aus
-  `snap.contexts` (der merkende Automationslauf, `overwrite: false` meldet einen neuen Lauf an, Restore ohne Forget
-  auch). Fremder Befehl (user_id oder parent_id) beim Beruhigen → sofort fertig mit letztem ruhigen Zustand.
-  Danach Abweichung = `compare.deviation` (rein, je Domäne, Toleranz in Prozentpunkten). Entscheidung beim Restore
-  live (`manual_reason`), zurück auf erwartet = wieder unverändert. Gründe: manual, moving, handed_over, unavailable,
-  unsupported, not_saved.
-- Übergabe (1.2): Abweichung + anderer Slot hat danach (`saved_at` ≥ unser) genau unseren erwarteten Zustand gemerkt
-  (`handover_slots`) → beim Restore dessen `saved` = unser `saved`, ohne Bewegung, eigener Slot weg. Tests in
-  `tests/test_handover.py` (alle Reihenfolgen, 3 Slots).
+- `manager.py` = Herzstück (`RecallManager`, `Snapshot`), Speicher `.storage/recall.snapshots` (`RecallStore`).
+- `compare.py` reine Logik ohne HA (Abweichung je Domäne), `settings.py` Optionen, `config_flow.py` mit Options-Menü
+  „Standardeinstellungen“ + „Gemerkte Zustände“, `services.py` (save/restore/forget/create_scene),
+  `condition.py` (`recall.is_saved`), `sensor.py` (ein Sensor), `__init__.py` mit Reparatur-Hinweis `saver_installed`.
+
+## Warum es so ist (steht nicht im Code)
+
+- Speicherformat nur über Minor-Version ändern; `Snapshot.from_dict` füllt fehlende Felder.
+- Wiederherstellen über `async_reproduce_state` (wie Szenen) mit dem Kontext des Aufrufs.
+- Handbetrieb: nach `save` erst beruhigen, dann gilt der erwartete Zustand. Eigene Änderungen erkennt Recall an der
+  Kontext-ID (oder parent_id) aus `snap.contexts`; ein fremder Befehl beim Beruhigen beendet es sofort. Entscheidung
+  beim Restore fällt live (`manual_reason`), zurück auf erwartet = wieder unverändert.
+- Übergabe: hat ein anderer Slot danach genau unseren erwarteten Zustand gemerkt, übernimmt er unser `saved`
+  (ohne Bewegung). Tests in `tests/test_handover.py` (alle Reihenfolgen, 3 Slots).
+- Neue Domäne: in `compare.py` + Test in `tests/test_compare.py` **und** in `SAVED_ATTRIBUTES` eintragen, sonst wird
+  nur der Zustand gemerkt.
 - `restore`/`forget` in `services.yaml` ohne `target` (sonst roter Editor-Hinweis), Feld `entity_id`; Schema nimmt
   weiter alle Zielfelder.
-- Optionen (1.1): `settings.py` (`Settings.from_options`, alle Vorgaben aus `const.DEFAULT_*`, Abschnitte
-  restore/detection/expiry), Options-Flow in `config_flow.py` = Menü „Standardeinstellungen“ + „Gemerkte Zustände“
-  (Slots ansehen/vergessen; bewusst kein Button, weil gezielt je Slot). Update-Listener → `async_update_settings`
-  ohne Neuladen. Aktionsfelder ohne Wert → Einstellung; `expires_after: 0` = nie.
-- `compare.py` reine Logik ohne HA, neue Domänen hier + Test in `tests/test_compare.py`. `SAVED_ATTRIBUTES` legt je
-  Domäne fest, welche Attribute `state_to_dict` überhaupt merkt (nur was `deviation`/`describe` und HAs
-  `reproduce_state` lesen; neue Domäne = dort eintragen, sonst wird nur der Zustand gemerkt).
-- Zustands-Listener speichert/schreibt den Sensor nur, wenn sich ein Feld aus `Snapshot.as_dict()` ändert
-  (`last_change` allein plant nur den Termin neu). Entladen: `async_stop` vor `async_flush`, danach ist
-  `_async_changed` stumm (`_stopped`).
-- `services.py` (save/restore/forget/create_scene mit Antwortdaten, in `async_setup`; `create_scene` ruft
-  `scene.create` mit `manager.async_scene_states`, immer `scene.recall_<id>`, Slot bleibt), `condition.py` + `conditions.yaml`
-  (`recall.is_saved`), `sensor.py` (ein Sensor, Attribut `slots` nicht im Recorder), Reparatur-Hinweis
-  `saver_installed` solange Saver eingerichtet ist (`__init__.py`, reagiert auf Eintragsänderungen).
+- Gemerkte Zustände im Options-Flow, bewusst kein Button, weil gezielt je Slot. Optionen wirken ohne Neuladen.
+- Zustands-Listener speichert nur bei Änderung eines Felds aus `Snapshot.as_dict()`; Attribut `slots` nicht im
+  Recorder. Entladen: `async_stop` vor `async_flush`, danach ist `_async_changed` stumm (`_stopped`).
+- `create_scene` legt immer `scene.recall_<id>` an, der Slot bleibt.
 - Logo: Variante B „Lesezeichen“ in `brand/`; Quellen + Erzeuger in `docs/logo-varianten/`
   (`erzeugen.py` schreibt SVGs + `vergleich.html`, PNGs per Edge headless).
 - README-Bilder: Titelbild und Karten aus `docs/readme-images.json` mit `theme/v1/readme-images/render.mjs <repo>`
@@ -56,9 +48,10 @@ Versionen = Kalender-Schema `YY.M.N` (Jahr, Monat ohne Null, N = laufendes Relea
 
 ## Prüfen
 
-- `.venv/bin/python -m pytest -q -p no:logging --cov=custom_components.recall` (≥ 95 %, Fake-Geräte
+- `.venv/bin/python -m pytest -q -p no:logging --cov=custom_components.recall` (≥ 98 % wie in CI, Fake-Geräte
   in `tests/common.py`, Zeit über `freezer` + `async_fire_time_changed`)
-- `uvx ruff check . && uvx ruff format --check .`, `uvx mypy@2.3.1 --python-executable .venv/bin/python`
+- `uvx ruff@0.16.9 check . && uvx ruff@0.16.9 format --check .`, `uvx mypy@2.3.1 --python-executable .venv/bin/python`
+  (Versionen wie in `pruefung.yml`)
 - `python tools/pruefe-uebersetzungen.py` (strings.json gegen translations/*.json)
 - GitHub Actions `.github/workflows/pruefung.yml` (Vorlage repo-vorlagen/vorlagen/ci-ha-integration.yml): dasselbe bei
   Push/PR auf main, montags zusätzlich gegen die neueste HA; Abdeckungsgrenze dort 98 % (`--cov-fail-under`).
