@@ -10,7 +10,7 @@ A modern replacement for <b>Saver</b>.</p>
 
 [![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FSH1FT-W%2Frecall%2Fmain%2Fcustom_components%2Frecall%2Fmanifest.json&query=%24.version&label=version&style=flat-square&color=FF7A45&labelColor=111111)](https://github.com/SH1FT-W/recall/releases/latest)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2026.9%2B-FF7A45?style=flat-square&labelColor=111111&logo=homeassistant&logoColor=white)](https://www.home-assistant.io)
-[![Marketplace](https://img.shields.io/badge/Marketplace-custom%20repository-FF7A45?style=flat-square&labelColor=111111)](https://hacs.xyz)
+[![Marketplace](https://img.shields.io/badge/Marketplace-default-FF7A45?style=flat-square&labelColor=111111)](https://hacs.xyz)
 [![IoT class](https://img.shields.io/badge/iot-calculated-FF7A45?style=flat-square&labelColor=111111)](https://developers.home-assistant.io/docs/creating_integration_manifest/#iot-class)
 [![Quality scale](https://img.shields.io/badge/quality%20scale-platinum%20(self--assessed)-FF7A45?style=flat-square&labelColor=111111)](custom_components/recall/quality_scale.yaml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-FF7A45?style=flat-square&labelColor=111111)](LICENSE)
@@ -325,8 +325,6 @@ The Marketplace is under Settings → Marketplace. On Home Assistant before 2026
 [![Open in the Marketplace](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=SH1FT-W&repository=recall&category=integration)
 
 1. In the Marketplace, search for **Recall** (or click **Open in the Marketplace** above), download it and restart Home Assistant.
-
-Not in the search yet? Then add it as a custom repository first: in the Marketplace open the three dots menu, choose **Custom repositories** and add `https://github.com/SH1FT-W/recall` with the type **Integration**.
 
 ### Manual
 
