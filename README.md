@@ -2,7 +2,7 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-title-dark.webp" />
-  <img src="docs/images/readme-title-light.webp" alt="Recall: Remember a state. Restore it, unless you changed it. The feature overview of the project page in a window." />
+  <img src="docs/images/readme-title-light.webp" alt="Recall: Remember a state. Restore it, unless you changed it." />
 </picture>
 
 [![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FSH1FT-W%2Frecall%2Fmain%2Fcustom_components%2Frecall%2Fmanifest.json&query=%24.version&label=version&style=flat-square&color=FF7A45&labelColor=111111)](https://github.com/SH1FT-W/recall/releases/latest)
