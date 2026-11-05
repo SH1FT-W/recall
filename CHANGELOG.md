@@ -1,5 +1,9 @@
 # Changelog
 
+## 26.11.3 – 05.11.2026
+
+- README and project page: new layout, shorter and easier to scan, with one table at the core.
+
 ## 26.11.2 – 02.11.2026
 
 - Neue Aktion `recall.create_scene`: erstellt aus einem Slot eine Szene über `scene.create` (dynamisch,
