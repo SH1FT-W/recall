@@ -5,195 +5,120 @@
   <img src="docs/images/readme-title-light.webp" alt="Recall: Remember a state. Restore it, unless you changed it. The feature overview of the project page in a window." />
 </picture>
 
-<p>Remember a state, restore it later, unless someone changed it by hand in the meantime.<br/>
-A modern replacement for <b>Saver</b>.</p>
-
 [![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FSH1FT-W%2Frecall%2Fmain%2Fcustom_components%2Frecall%2Fmanifest.json&query=%24.version&label=version&style=flat-square&color=FF7A45&labelColor=111111)](https://github.com/SH1FT-W/recall/releases/latest)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2026.9%2B-FF7A45?style=flat-square&labelColor=111111&logo=homeassistant&logoColor=white)](https://www.home-assistant.io)
 [![Marketplace](https://img.shields.io/badge/Marketplace-default-FF7A45?style=flat-square&labelColor=111111)](https://hacs.xyz)
-[![IoT class](https://img.shields.io/badge/iot-calculated-FF7A45?style=flat-square&labelColor=111111)](https://developers.home-assistant.io/docs/creating_integration_manifest/#iot-class)
-[![Quality scale](https://img.shields.io/badge/quality%20scale-platinum%20(self--assessed)-FF7A45?style=flat-square&labelColor=111111)](custom_components/recall/quality_scale.yaml)
-[![License](https://img.shields.io/badge/license-Apache%202.0-FF7A45?style=flat-square&labelColor=111111)](LICENSE)
 
-<p><a href="https://sh1ft-w.github.io/recall"><b>Website</b></a> &nbsp;·&nbsp; <a href="#features">Features</a> &nbsp;·&nbsp; <a href="#actions">Actions</a> &nbsp;·&nbsp; <a href="#installation">Install</a> &nbsp;·&nbsp; <a href="#migrating-from-saver">From&nbsp;Saver</a> &nbsp;·&nbsp; <a href="#troubleshooting">Troubleshooting</a> &nbsp;·&nbsp; <a href="CHANGELOG.md">Changelog</a></p>
+<a href="https://sh1ft-w.github.io/recall"><b>Website</b></a>&emsp;<a href="#install">Install</a>&emsp;<a href="#actions">Actions</a>&emsp;<a href="#examples">Examples</a>&emsp;<a href="#from-saver">From Saver</a>&emsp;<a href="CHANGELOG.md">Changelog</a>
 
 </div>
 
 <br/>
 
-Many automations change something for a while and put it back afterwards: lights for a movie, blinds for the sun, the thermostat while a window is open, the speaker volume for an announcement. The usual tool for that is [Saver](https://github.com/PiotrMachowski/Home-Assistant-custom-components-Saver). Recall does the same job and fixes what made Saver awkward in practice: it **notices when someone took over** and leaves that device alone, keeps **named slots** so two automations do not overwrite each other, and **survives restarts**. No more `input_boolean.*_controlled_by_automation` helpers.
+Many automations change something for a while and put it back afterwards: lights for a movie, blinds for the sun, the thermostat while a window is open. Recall remembers the state and restores it later, **unless someone changed it by hand in the meantime.** Named slots keep two automations on the same device apart, and everything survives restarts. No more `input_boolean.*_controlled_by_automation` helpers.
 
-> [!NOTE]
-> Recall is an independent project. It is not affiliated with Saver or its author, and contains no code from it.
+Recall replaces [Saver](https://github.com/PiotrMachowski/Home-Assistant-custom-components-Saver) but is an independent project with no code from it. It is used every day with lights and blinds; climate, fans, media players and the other domains are covered by the automated tests only.
 
-**Tested on:** used every day with lights and blinds (wall switches and TV automations). Climate, fans, media players and the other domains in the table below are covered by the automated tests only.
+## Restore or skip
 
-<a id="features"></a>
-## Features
+What `recall.restore` does, depending on what happened since `recall.save`:
 
-<!-- cards:features -->
-<table>
-<tr><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/hand-back-right-outline-dark.svg"><img src="docs/images/icons/hand-back-right-outline-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Knows when you took over</b><br>Recall learns the state the automation ends up in. Dimmed the light, moved the blind or turned up the heating since? recall.restore leaves it alone.</td><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/bookmark-multiple-outline-dark.svg"><img src="docs/images/icons/bookmark-multiple-outline-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Named slots</b><br>Two automations on the same device no longer overwrite each other. Slots even hand over to each other in any order.</td></tr>
-<tr><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/content-save-outline-dark.svg"><img src="docs/images/icons/content-save-outline-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Survives restarts</b><br>Stored in .storage/recall.snapshots, not in the attributes of an entity.</td><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/movie-open-outline-dark.svg"><img src="docs/images/icons/movie-open-outline-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Restores like a scene</b><br>Home Assistant's own reproduce_state brings back position and tilt, brightness and colour, climate targets and more. Optional light transition.</td></tr>
-<tr><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/timer-sand-dark.svg"><img src="docs/images/icons/timer-sand-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Expiry</b><br>expires_after forgets a remembered state that was never restored, set per action or as a default.</td><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/message-reply-text-outline-dark.svg"><img src="docs/images/icons/message-reply-text-outline-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Answers and events</b><br>Every action returns what it did: restored, or skipped with a reason. Events for everything, plus the condition recall.is_saved.</td></tr>
-</table>
-<!-- /cards:features -->
+| Since `recall.save` | `recall.restore` |
+|:--|:--|
+| Nothing changed after the automation was done | restores |
+| Changed by hand, in the UI or by another automation | skips, reason `manual` with what changed |
+| Changed and then put back to what the automation left | restores |
+| The device is moving right now | skips, reason `moving` |
+| Another slot remembered exactly the expected state and moved it | hands over to that slot, nothing moves |
+| The device is unavailable | skips and keeps it for a later try |
+| `only_if_unchanged: false` | restores anyway |
 
-<!-- cards:entities -->
-<table>
-<tr><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/bookmark-plus-outline-dark.svg"><img src="docs/images/icons/bookmark-plus-outline-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>recall.save</b><br>Remember entities, devices, areas, floors or labels in a slot, with optional expiry, overwrite and tolerance.</td><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/history-dark.svg"><img src="docs/images/icons/history-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>recall.restore</b><br>Put the slot back. Skips what was changed by hand, forgets afterwards, optional transition for lights.</td></tr>
-<tr><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/bookmark-remove-outline-dark.svg"><img src="docs/images/icons/bookmark-remove-outline-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>recall.forget</b><br>Drop a whole slot or single entities without moving anything.</td><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/palette-dark.svg"><img src="docs/images/icons/palette-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>recall.create_scene</b> <code>26.11.2</code><br>Turn a slot into a scene: always scene.recall_&lt;name&gt;, so it never collides with your own scenes or Hue &amp; Co. Dynamic until restart, the slot stays as it is.</td></tr>
-<tr><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/check-decagram-outline-dark.svg"><img src="docs/images/icons/check-decagram-outline-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Condition recall.is_saved</b><br>True when every target is remembered in the slot, optionally only if nobody changed it.</td><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/counter-dark.svg"><img src="docs/images/icons/counter-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Sensor</b><br>sensor.recall_saved_states counts remembered entities. The slots attribute shows saved, expected and changed by.</td></tr>
-<tr><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/cog-outline-dark.svg"><img src="docs/images/icons/cog-outline-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Options</b><br>Default settings for restoring, detecting manual changes and expiry, plus a list of remembered states to forget.</td></tr>
-</table>
-<!-- /cards:entities -->
+**New in 26.11:** `recall.create_scene` turns a slot into a scene, and a renamed entity keeps its remembered states. Every change is in the [changelog](CHANGELOG.md) (German).
+
+<a id="install"></a>
+## Install
+
+[![Open in the Marketplace](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=SH1FT-W&repository=recall&category=integration)
+
+Search for **Recall** under **Settings > Marketplace** (called HACS before Home Assistant 2026.11), download it and restart Home Assistant. Then add it under **Settings > Devices & services > Add integration > Recall**. No questions asked.
+
+<details>
+<summary>Install by hand</summary>
+
+1. Download the [latest release](https://github.com/SH1FT-W/recall/releases/latest).
+2. Copy `custom_components/recall` into `/config/custom_components/` and restart Home Assistant.
+
+</details>
+
+**Settings > Devices & services > Recall > Configure** holds the defaults (respect manual changes, forget afterwards, tolerance 3 %, calm time 15 s, expiry) and the list of remembered states, where you can forget slots without moving anything. Changes apply right away.
 
 <a id="actions"></a>
 ## Actions
 
-### `recall.save`
+| Action | Does |
+|:--|:--|
+| `recall.save` | Remembers entities, devices, areas, floors or labels in a `slot`, with optional `expires_after`, `overwrite` and `tolerance`. |
+| `recall.restore` | Puts the slot back and skips what was changed (see above). `forget` afterwards and a light `transition` are optional. |
+| `recall.forget` | Drops a whole slot or single entities without moving anything. |
+| `recall.create_scene` | Creates `scene.recall_<scene_id>` from a slot, like `scene.create`: dynamic until restart, the slot stays. |
+| Condition `recall.is_saved` | True when every target is remembered in the slot, with `unchanged: true` only if nobody changed it. |
+| `sensor.recall_saved_states` | Number of remembered entities. Attribute `slots` shows saved, expected and `changed_by` per entity (not recorded). |
+
+Every action returns what it did, and fires `recall_saved`, `recall_restored`, `recall_skipped` or `recall_forgotten` with `slot` and `entity_id`.
+
+<details>
+<summary>Fields and responses</summary>
+
+**`recall.save`**
 
 | Field | Default | |
-|---|---|---|
+|:--|:--|:--|
 | target | | Entities, devices, areas, floors or labels |
 | `slot` | `default` | Name of the memory slot |
 | `expires_after` | setting | Forget automatically after this time; `0` = never |
 | `overwrite` | `true` | `false` keeps a state already remembered in the slot (the *original* one) |
-| `tolerance` | setting (3) | Percentage points position/tilt/brightness/fan speed/volume may drift before it counts as a manual change |
+| `tolerance` | setting (3) | Percentage points position, tilt, brightness, fan speed or volume may drift before it counts as a manual change |
 
 Response: `{slot, saved: [...], kept: [...], missing: [...]}`.
 
-### `recall.restore`
+**`recall.restore`**
 
 | Field | Default | |
-|---|---|---|
-| `entity_id` (or `target`) | all of the slot | Restore only these entities (`target` with areas/devices/labels works in YAML) |
+|:--|:--|:--|
+| `entity_id` (or `target`) | all of the slot | Restore only these entities (`target` with areas, devices or labels works in YAML) |
 | `slot` | `default` | |
 | `only_if_unchanged` | setting (on) | Skip entities changed by hand or by another automation |
 | `forget` | setting (on) | Forget afterwards (also when skipped because of a manual change) |
 | `transition` | | Light fade in seconds |
 
-Response: `{slot, restored: [...], skipped: [{entity_id, reason, detail}]}` with reason
-`manual` (detail e.g. `current_position: 40 → 70`, `changed_by` = `user`/`automation`/`device`/`recall`/`unknown`),
-`moving` (someone else is moving it right now), `handed_over` (detail = the slot that took over, see below),
-`unavailable` (kept for a later try), `unsupported` (the domain cannot be restored by Home Assistant) or `not_saved`
-(also for a slot that holds nothing: `entity_id: null`, detail `slot … is empty`). Every item has
-`{entity_id, reason, detail, changed_by}`.
+Response: `{slot, restored: [...], skipped: [{entity_id, reason, detail, changed_by}]}`. Reasons: `manual` (detail e.g. `current_position: 40 → 70`, `changed_by` = `user`, `automation`, `device`, `recall` or `unknown`), `moving`, `handed_over` (detail = the slot that took over), `unavailable`, `unsupported` (the domain has no `reproduce_state`) and `not_saved` (also for an empty slot).
 
-#### Handing over between slots
+**`recall.forget`**: slot only removes the whole slot; `entity_id` or `target` only removes these entities in every slot. An unknown slot answers `skipped: [{slot, reason: not_saved}]`.
 
-Two automations with their own slots on the same device, e.g. PS5 remembers the blind at 70 % in `ps5` and moves it
-to 50 %, then the Apple TV remembers those 50 % in `apple_tv` and moves it to 40 %. If the PS5 is switched off
-first, the blind is not where `ps5` expected it, but only because `apple_tv` remembered exactly that expected
-state and moved it afterwards. That is not a manual change: Recall **hands over**. `apple_tv` now remembers 70 %,
-nothing moves, `ps5` is forgotten (`reason: handed_over`, event `recall_forgotten` with `reason: handed_over`).
-Switching off the Apple TV then goes back to 70 %. The other order works as before. A real manual change after the
-second slot remembered is then detected by that slot; another automation *without* a Recall slot still counts as a
-manual change (`changed_by: automation`). Works with any number of slots in any order.
-
-### `recall.forget`
-
-Removes remembered states without restoring. Slot only → whole slot; `entity_id`/`target` only → these entities in
-every slot. An unknown slot answers `skipped: [{slot, reason: not_saved}]`.
-
-### `recall.create_scene`
-
-Creates a scene from a slot, the same way as `scene.create`: `scene.recall_<scene_id>` with the remembered state and the
-attributes a restore would use (position/tilt, brightness/colour, temperature …). The scene is dynamic: it lasts
-until Home Assistant restarts and is not written to `scenes.yaml`. The slot stays as it is (nothing is forgotten,
-nothing moves). Calling it again with the same `scene_id` replaces the scene. The `recall_` prefix keeps these
-scenes apart from your own and from those of other integrations (Hue & Co.).
+**`recall.create_scene`**
 
 | Field | Default | |
-|---|---|---|
+|:--|:--|:--|
 | `entity_id` (or `target`) | all of the slot | Only these entities |
 | `slot` | `default` | |
-| `scene_id` | slot name as a slug | Object ID of the scene, always prefixed with `recall_` (not doubled), e.g. `before_movie` → `scene.recall_before_movie` |
+| `scene_id` | slot name as a slug | Always prefixed with `recall_` (not doubled), e.g. `before_movie` becomes `scene.recall_before_movie` |
 
-Response: `{slot, scene, entity_id: [...], skipped: [{entity_id, reason, detail, changed_by}]}` with reason
-`not_saved` or `unsupported` (domains Home Assistant cannot restore). Fails if nothing in the slot fits into a scene,
-if the `scene` integration is not loaded, or if a scene from `scenes.yaml` already uses that `recall_…` ID.
+Response: `{slot, scene, entity_id: [...], skipped: [...]}`. The scene holds the remembered state with the attributes a restore would use and is not written to `scenes.yaml`; calling it again with the same `scene_id` replaces it. The `recall_` prefix keeps it apart from your own scenes and those of Hue & Co. Fails if nothing in the slot fits, if the `scene` integration is not loaded, or if a scene from `scenes.yaml` already uses that ID.
 
-```yaml
-actions:
-  - action: recall.create_scene
-    data:
-      slot: apple_tv
-      scene_id: before_movie
-```
+**Condition `recall.is_saved`**: a hand-over to another slot does not count as a change. Old-style `group.*` targets resolve to their members.
 
-### Condition `recall.is_saved`
+**Events**: `recall_skipped` carries `reason`, `detail` and `changed_by`; `recall_forgotten` carries `reason` (`action`, `restore`, `handed_over`, `expired`, `entity_removed`). Entities deleted from the entity registry are forgotten automatically.
 
-True if every target entity has a remembered state in the slot; with `unchanged: true` also nobody changed it (a
-hand-over to another slot does not count as a change). Old-style `group.*` targets resolve to their members, exactly
-like in the actions. The orange × / green ✓ on its icon in the automation editor is Home Assistant's live check.
+**Sensor attribute `slots`**: per entity `saved_state`, `saved` (short, e.g. `70 % · tilt 30 %`), `saved_at`, `expires_at`, `settled`, `expected_state`, `expected`, `changed_manually`, `changed_by` (`unknown` if it changed while Home Assistant was off), `changed_at` and `handed_over_to`.
 
-```yaml
-conditions:
-  - condition: recall.is_saved
-    target:
-      entity_id: cover.living_room
-    options:
-      slot: apple_tv
-      unchanged: true
-```
+</details>
 
-### Events
-
-`recall_saved`, `recall_restored`, `recall_skipped` (with `reason`, `detail`, `changed_by`), `recall_forgotten`
-(with `reason`: `action`, `restore`, `handed_over`, `expired`, `entity_removed`). All carry `slot` and `entity_id`.
-Entities deleted from the entity registry are forgotten automatically.
-
-### Sensor
-
-`sensor.recall_saved_states`: number of remembered entities. Attribute `slots` lists every slot and entity with
-`saved_state`, `saved` (short, e.g. `70 % · tilt 30 %` or `on · 80 % · 2700 K`), `saved_at`, `expires_at`, `settled`,
-`expected_state`, `expected`, `changed_manually`, `changed_by` (`user`/`automation`/`device`/`recall`, `unknown` if
-it changed while Home Assistant was off), `changed_at` and `handed_over_to`. The attribute is not written to the recorder.
-
-<a id="configuration"></a>
-## Configuration
-
-**Settings > Devices & services > Recall > Configure** opens a menu:
-
-- **Default settings:** used whenever an action does not set the field itself; changes apply immediately, no
-  restart. *Restoring:* respect manual changes (`only_if_unchanged`, on), forget afterwards (`forget`, on).
-  *Detecting manual changes:* tolerance (3 %), calm time (15 s), wait when nothing happens (60 s), longest wait
-  (10 min). *Expiry:* forget after (empty = never; `expires_after: 0` in an action overrides it with “never”).
-- **Remembered states:** lists every slot and entity with what is remembered (position/tilt, brightness/colour
-  temperature …) and when it expires (⏳); ✋ = changed by hand since, ↪ = will be handed over to that slot. Forgets
-  the slots you tick, without moving anything.
-
-## How manual changes are detected
-
-1. **Settling.** Right after `recall.save` the automation usually moves the device. Every change restarts a 15 s (configurable)
-   quiet window; travel states (`opening`/`closing`) never count as finished. Nothing changes at all → after
-   60 s the saved state is the expected one. Never quiet → after 10 min the last calm state is used.
-2. **Expected.** The calm state at the end is what the automation wanted. Changes made later *by the same
-   automation run* (same context, e.g. after a `delay`) start step 1 again. Any other change is compared with the
-   expected state:
-
-   | Domain | Compared |
-   |---|---|
-   | cover, valve | position and tilt ± tolerance (state if no position) |
-   | light | on/off, brightness ± tolerance, colour mode, colour temperature ± 150 K, hue/saturation ± 10, effect |
-   | climate | HVAC mode, target temperature(s) ± 0.5, preset, fan mode |
-   | fan | on/off, percentage ± tolerance, preset, oscillation, direction |
-   | media_player | on/off, volume ± tolerance, source, sound mode (not playing/paused) |
-   | humidifier, water_heater | state, target ± tolerance/0.5, mode |
-   | number, input_number | numeric value |
-   | everything else | state |
-
-3. **Restore.** Still as expected (or still settling) → restore. Otherwise skip with reason. Going back to the
-   expected state by hand counts as unchanged again.
-
-A command from someone else *while settling* (a user in the Home Assistant UI or another automation) ends the
-settling right away with the last calm state, so even an immediate manual change is noticed.
-
+<a id="examples"></a>
 ## Examples
 
+Blind half closed while the Apple TV plays, back when it stops, unless someone moved it:
+
 ```yaml
-# Blind half closed while the Apple TV plays, back when it stops, unless someone moved it
 triggers:
   - trigger: state
     entity_id: media_player.apple_tv
@@ -229,7 +154,8 @@ actions:
               slot: apple_tv
 ```
 
-Using the response:
+<details>
+<summary>Tell me when it was left alone</summary>
 
 ```yaml
 - action: recall.restore
@@ -243,8 +169,12 @@ Using the response:
         message: "Blind left as it is, you moved it yourself."
 ```
 
-A light that a wall switch turns to full brightness and back. Here the switch is the user’s intent, so always
-restore:
+</details>
+
+<details>
+<summary>Wall switch: always restore, with a fade</summary>
+
+Here the switch is the user's intent, so restore regardless:
 
 ```yaml
 - action: recall.restore
@@ -254,27 +184,50 @@ restore:
     transition: 3
 ```
 
-A later step of the same automation that runs in a *new* run (another trigger) should be counted as the
-automation’s own: call `recall.save` with `overwrite: false` right before it. The original state is kept and the
-new run is registered as the automation’s own.
+</details>
 
-<a id="migrating-from-saver"></a>
-## Migrating from Saver
+<details>
+<summary>Only if nobody touched it, as a condition</summary>
+
+```yaml
+conditions:
+  - condition: recall.is_saved
+    target:
+      entity_id: cover.living_room
+    options:
+      slot: apple_tv
+      unchanged: true
+```
+
+</details>
+
+<details>
+<summary>Two slots on the same blind</summary>
+
+The PS5 remembers the blind at 70 % in `ps5` and moves it to 50 %. Then the Apple TV remembers those 50 % in `apple_tv` and moves it to 40 %. If the PS5 is switched off first, the blind is not where `ps5` expected it, but only because `apple_tv` remembered exactly that state. That is not a manual change: Recall hands over. `apple_tv` now remembers 70 %, nothing moves, `ps5` is forgotten. Switching off the Apple TV then goes back to 70 %. The other order goes back step by step. Works with any number of slots in any order.
+
+</details>
+
+<a id="from-saver"></a>
+## From Saver
 
 | Saver | Recall |
-|---|---|
+|:--|:--|
 | `saver.save_state` | `recall.save` (+ `slot`) |
 | `saver.restore_state` | `recall.restore` (+ `slot`) |
 | `delete_after_run: false` | `forget: false` |
-| `transition` | `transition` |
 | `saver.delete` | `recall.forget` |
-| “controlled by automation” helper + condition | not needed, `only_if_unchanged` (default) |
+| "controlled by automation" helper + condition | not needed, `only_if_unchanged` is the default |
 | `saver_entity()` in templates | sensor attribute `slots` or condition `recall.is_saved` |
-| `saver.set_variable` / `saver_variable()` | not part of Recall, use an `input_text`/`input_datetime` helper |
+| `saver.set_variable` / `saver_variable()` | not part of Recall, use an `input_text` or `input_datetime` helper |
 
-Before:
+States remembered by Saver are not taken over: switch automations at a moment nothing is waiting to be restored. While Saver is still set up, Recall shows a repair notice as a reminder.
+
+<details>
+<summary>Before and after</summary>
 
 ```yaml
+# Saver
 - action: saver.save_state
   data:
     entity_id: [cover.living_room]
@@ -296,9 +249,8 @@ Before:
       target: {entity_id: input_boolean.blind_controlled_by_tv}
 ```
 
-After:
-
 ```yaml
+# Recall
 - action: recall.save
   target: {entity_id: cover.living_room}
   data: {slot: tv}
@@ -310,56 +262,21 @@ After:
   data: {slot: tv}
 ```
 
-States remembered by Saver are not taken over: switch automations over at a moment nothing is waiting to be
-restored. While Saver is still set up, Recall shows a repair notice as a reminder.
-
-<a id="installation"></a>
-## Installation
-
-**Requirements:** Home Assistant 2026.9 or newer.
-
-### Marketplace
-
-The Marketplace is under Settings → Marketplace. On Home Assistant before 2026.11 it is still called HACS.
-
-[![Open in the Marketplace](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=SH1FT-W&repository=recall&category=integration)
-
-1. In the Marketplace, search for **Recall** (or click **Open in the Marketplace** above), download it and restart Home Assistant.
-
-### Manual
-
-1. Download the [latest release](https://github.com/SH1FT-W/recall/releases/latest).
-2. Copy the folder `custom_components/recall` into `/config/custom_components/` and restart Home Assistant.
-
-### Setup
-
-**Settings > Devices & services > Add integration > Recall.** No questions asked.
+</details>
 
 ## Good to know
 
-- **Same device in two slots** works in any order: restoring the inner slot first goes back step by step; restoring
-  the outer slot first hands its remembered state over to the inner one (see *Handing over between slots*).
-- **Buttons on the device itself** cannot be told apart from the device reporting its own travel. A manual change
-  in the first seconds after `recall.save` (before the device is calm) is therefore taken as the automation’s
-  target. Changes in the Home Assistant UI or by other automations are recognised at any time.
-- **Moving at restore time**: if the device is travelling (`opening`/`closing`) after the automation was done,
-  someone else moves it, so restore is skipped (`moving`).
-- **Unavailable** devices are skipped and stay remembered.
-- **Saving while unavailable** is not possible (`missing` in the response).
-- Restoring uses each domain’s `reproduce_state`; domains without one (e.g. `sensor`) are skipped with `unsupported`.
-- **Lights** remembered with a colour mode but without its value (e.g. `color_temp` with `color_temp_kelvin: null`)
-  come back with on/off and brightness instead of being skipped silently.
+- **Buttons on the device itself** cannot be told apart from the device reporting its own travel. A change in the first seconds after `recall.save`, before the device is calm, is taken as the automation's target. Changes in the UI or by other automations are recognised at any time.
+- **A later step in a new run** of the same automation (another trigger) counts as a manual change. Call `recall.save` with `overwrite: false` right before it to register it as the automation's own.
+- **Saving an unavailable entity** is not possible (`missing` in the response).
+- **Lights** remembered with a colour mode but without its value come back with on/off and brightness.
 
-<a id="troubleshooting"></a>
-## Troubleshooting
+<details>
+<summary>Troubleshooting</summary>
 
-- **Restore skipped although nobody touched it.** Look at `detail` in the response or the `recall_skipped` event,
-  e.g. `current_position: 40 → 45`: raise `tolerance` on `recall.save`.
-- **Restore happened although someone changed it.** The change probably came from the device’s own button within
-  the settling window (see above), or `only_if_unchanged` is off.
-- **Diagnostics:** **Settings > Devices & services > Recall > three dots > Download diagnostics** shows every slot with saved,
-  expected and current state, the settings and whether a restore would be skipped. Sensitive attributes
-  (`access_token`, `entity_picture`, coordinates, …) are redacted.
+- **Restore skipped although nobody touched it.** Look at `detail` in the response or the `recall_skipped` event, e.g. `current_position: 40 → 45`, and raise `tolerance` on `recall.save`.
+- **Restore happened although someone changed it.** The change probably came from the device's own button within the settling window, or `only_if_unchanged` is off.
+- **Diagnostics:** **Settings > Devices & services > Recall > three dots > Download diagnostics** shows every slot with saved, expected and current state, the settings and whether a restore would be skipped. Sensitive attributes (`access_token`, `entity_picture`, coordinates) are redacted.
 - **Debug log:**
 
   ```yaml
@@ -368,22 +285,40 @@ The Marketplace is under Settings → Marketplace. On Home Assistant before 2026
       custom_components.recall: debug
   ```
 
-## Removal
+</details>
+
+<details>
+<summary>Remove</summary>
 
 1. **Settings > Devices & services > Recall > three dots > Delete.** Remembered states are deleted with it.
-2. Delete `/config/custom_components/recall` and restart Home Assistant.
+2. Remove the repository in the Marketplace (or delete `/config/custom_components/recall`) and restart Home Assistant.
 
-## How it works
+</details>
 
-<!-- cards:how -->
-<table>
-<tr><td width="33%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/bookmark-outline-dark.svg"><img src="docs/images/icons/bookmark-outline-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>1. Remember</b><br>recall.save stores the current state and registers the automation run that called it.</td><td width="33%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/timer-outline-dark.svg"><img src="docs/images/icons/timer-outline-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>2. Settle</b><br>Every change by that run restarts a quiet window. The calm state at the end is what the automation wanted.</td><td width="33%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/history-dark.svg"><img src="docs/images/icons/history-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>3. Restore or skip</b><br>Still as expected? Restore. Changed by someone else? Skip with the reason, or hand over to another slot.</td></tr>
-</table>
-<!-- /cards:how -->
+<details>
+<summary>How it works</summary>
 
-Recall keeps one state listener for all remembered entities and one timer for settling and expiry. Restoring goes through Home Assistant's `async_reproduce_state`, the same path scenes use, with the context of the calling automation. Details, in German, are in [`CLAUDE.md`](CLAUDE.md).
+1. **Remember.** `recall.save` stores the current state in `.storage/recall.snapshots` and registers the automation run that called it.
+2. **Settle.** Every change by that run restarts a quiet window (15 s); `opening` and `closing` never count as finished. Nothing happens at all: after 60 s the saved state is the expected one. Never quiet: after 10 minutes the last calm state is used. A command from someone else while settling ends it right away.
+3. **Restore or skip.** Any other change is compared with the expected state:
 
-## Development
+| Domain | Compared |
+|:--|:--|
+| cover, valve | position and tilt ± tolerance (state if no position) |
+| light | on/off, brightness ± tolerance, colour mode, colour temperature ± 150 K, hue and saturation ± 10, effect |
+| climate | HVAC mode, target temperature(s) ± 0.5, preset, fan mode |
+| fan | on/off, percentage ± tolerance, preset, oscillation, direction |
+| media_player | on/off, volume ± tolerance, source, sound mode (not playing or paused) |
+| humidifier, water_heater | state, target ± tolerance or 0.5, mode |
+| number, input_number | numeric value |
+| everything else | state |
+
+Restoring goes through Home Assistant's `async_reproduce_state`, the same path scenes use, with the context of the calling automation. One state listener covers all remembered entities, one timer handles settling and expiry. Details, in German, are in [`CLAUDE.md`](CLAUDE.md).
+
+</details>
+
+<details>
+<summary>Development</summary>
 
 ```bash
 .venv/bin/python -m pytest -q -p no:logging --cov=custom_components.recall   # fake devices in tests/common.py
@@ -392,8 +327,10 @@ uvx mypy@2.3.1 --python-executable .venv/bin/python
 .venv/bin/python tools/pruefe-uebersetzungen.py    # strings.json against translations/*.json
 ```
 
-Install the test requirements with `pip install -r requirements_test.txt`. The same checks run on GitHub Actions for every push and pull request, plus HACS validation and hassfest. Self-assessed state of the [Integration Quality Scale](https://developers.home-assistant.io/docs/core/integration-quality-scale/): [`quality_scale.yaml`](custom_components/recall/quality_scale.yaml).
+Test requirements: `pip install -r requirements_test.txt`. GitHub Actions runs the same checks plus HACS validation and hassfest. Quality scale: platinum, [self-assessed](custom_components/recall/quality_scale.yaml).
+
+</details>
 
 ## License
 
-[Apache License 2.0](LICENSE), Copyright 2026 SH1FT-W. See [`NOTICE`](NOTICE) for acknowledgements.
+[Apache License 2.0](LICENSE), Copyright 2026 SH1FT-W. Acknowledgements in [`NOTICE`](NOTICE).
