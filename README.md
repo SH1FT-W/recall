@@ -2,14 +2,14 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-title-dark.webp" />
-  <img src="docs/images/readme-title-light.webp" alt="Recall: Remember a state. Restore it, unless you changed it." />
+  <img src="docs/images/readme-title-light.webp" alt="Recall: remembers a state and restores it later. Named slots. Survives restarts. Respects manual changes." />
 </picture>
 
 [![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FSH1FT-W%2Frecall%2Fmain%2Fcustom_components%2Frecall%2Fmanifest.json&query=%24.version&label=version&style=flat-square&color=FF7A45&labelColor=111111)](https://github.com/SH1FT-W/recall/releases/latest)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2026.9%2B-FF7A45?style=flat-square&labelColor=111111&logo=homeassistant&logoColor=white)](https://www.home-assistant.io)
 [![Marketplace](https://img.shields.io/badge/Marketplace-default-FF7A45?style=flat-square&labelColor=111111)](https://hacs.xyz)
 
-<a href="https://sh1ft-w.github.io/recall"><b>Website</b></a>&emsp;<a href="#install">Install</a>&emsp;<a href="#actions">Actions</a>&emsp;<a href="#examples">Examples</a>&emsp;<a href="#from-saver">From Saver</a>&emsp;<a href="CHANGELOG.md">Changelog</a>
+<a href="https://sh1ft-w.github.io/recall"><b>Website</b></a>&emsp;<a href="#get-started">Get started</a>&emsp;<a href="#actions">Actions</a>&emsp;<a href="#examples">Examples</a>&emsp;<a href="CHANGELOG.md">Changelog</a>
 
 </div>
 
@@ -19,7 +19,7 @@ Many automations change something for a while and put it back afterwards: lights
 
 Recall replaces [Saver](https://github.com/PiotrMachowski/Home-Assistant-custom-components-Saver) but is an independent project with no code from it. It is used every day with lights and blinds; climate, fans, media players and the other domains are covered by the automated tests only.
 
-## Restore or skip
+## What you get
 
 What `recall.restore` does, depending on what happened since `recall.save`:
 
@@ -35,12 +35,15 @@ What `recall.restore` does, depending on what happened since `recall.save`:
 
 **New in 26.11:** `recall.create_scene` turns a slot into a scene, and a renamed entity keeps its remembered states. Every change is in the [changelog](CHANGELOG.md) (German).
 
-<a id="install"></a>
-## Install
+<a id="get-started"></a><a id="install"></a><a id="set-up"></a>
+## Get started
 
 [![Open in the Marketplace](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=SH1FT-W&repository=recall&category=integration)
 
-Search for **Recall** under **Settings > Marketplace** (called HACS before Home Assistant 2026.11), download it and restart Home Assistant. Then add it under **Settings > Devices & services > Add integration > Recall**. No questions asked.
+1. **Install it.** Search for **Recall** under **Settings > Marketplace** (called HACS before Home Assistant 2026.11), download it and restart Home Assistant.
+2. **Add it** under **Settings > Devices & services > Add integration > Recall**. No questions asked.
+
+**Settings > Devices & services > Recall > Configure** holds the defaults (respect manual changes, forget afterwards, tolerance 3 %, calm time 15 s, expiry) and the list of remembered states, where you can forget slots without moving anything. Changes apply right away.
 
 <details>
 <summary>Install by hand</summary>
@@ -49,8 +52,6 @@ Search for **Recall** under **Settings > Marketplace** (called HACS before Home 
 2. Copy `custom_components/recall` into `/config/custom_components/` and restart Home Assistant.
 
 </details>
-
-**Settings > Devices & services > Recall > Configure** holds the defaults (respect manual changes, forget afterwards, tolerance 3 %, calm time 15 s, expiry) and the list of remembered states, where you can forget slots without moving anything. Changes apply right away.
 
 <a id="actions"></a>
 ## Actions
@@ -334,3 +335,11 @@ Test requirements: `pip install -r requirements_test.txt`. GitHub Actions runs t
 ## License
 
 [Apache License 2.0](LICENSE), Copyright 2026 SH1FT-W. Acknowledgements in [`NOTICE`](NOTICE).
+
+<br/>
+
+<div align="center">
+<a href="https://sh1ft-w.github.io"><img src="https://sh1ft-w.github.io/readme/footer.png" width="640" alt="All SH1FT-W projects"></a>
+<br/>
+<sub>More open source for Home Assistant and the Mac at <a href="https://sh1ft-w.github.io">sh1ft-w.github.io</a></sub>
+</div>

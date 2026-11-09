@@ -1,5 +1,5 @@
 {
-  "$comment": "Content of the README card pictures. Render with sh1ft-w.github.io/theme/v1/readme-images: node render.mjs <this repo> cards. The title image is built from tools/readme-title.html (see the comment there).",
+  "$comment": "Content of the README title. Render with sh1ft-w.github.io/theme/v2/readme-images (node render.mjs <this repo>): banner 1280 x 440 light and dark, social preview 1280 x 640. Used fields: title.name, title.line, title.lanes, title.logo, colors.*.bg/ink/ink2, colors.light.accent. The other fields are from the v1 title and no longer read.",
   "colors": {
     "light": {
       "bg": "#FBF6F2",
@@ -76,6 +76,12 @@
       "left": 600,
       "top": 70
     },
-    "layout": "center"
+    "layout": "center",
+    "line": "Remembers a state and restores it later.",
+    "lanes": [
+      "Named slots",
+      "Survives restarts",
+      "Respects manual changes"
+    ]
   }
 }

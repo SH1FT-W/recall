@@ -13,21 +13,18 @@
 <meta property="og:description" content="Remember a state, restore it later, unless someone changed it by hand.">
 <meta property="og:image" content="https://sh1ft-w.github.io/recall/images/readme-title-social.png">
 <link rel="icon" href="logo.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<!-- Shared SH1FT-W design (tokens, glass navigation, light/dark, DE/EN, reveal) -->
-<link rel="stylesheet" href="https://sh1ft-w.github.io/theme/v1/theme.css">
-<script src="https://sh1ft-w.github.io/theme/v1/theme.js"></script>
+<!-- Shared SH1FT-W design, version 2 (tokens, Archivo, navigation, light/dark, DE/EN, the lanes) -->
+<link rel="stylesheet" href="https://sh1ft-w.github.io/theme/v2/theme.css">
+<script src="https://sh1ft-w.github.io/theme/v2/theme.js"></script>
 <style>
 /* Recall-Palette: warmes Weiß bei Tag, tiefes Braun bei Nacht, Akzent #FF7A45 */
 :root {
   --accent: #FF7A45; --accent-ink: #C9471A; --on-accent: #ffffff;
-  --sea: #FF7A45; --sea-tint: rgba(255,122,69,0.10); --sea-glow: rgba(255,122,69,0.30); --aqua: #FFA77F;
+  --sea: #FF7A45; --sea-tint: rgba(255,122,69,0.10); --aqua: #FFA77F;
   --ch-w: #8FA3B1; --ch-b: #2F7FD8; --ch-g: #2FA36A; --ch-r: #E0584A;
-  --font: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --display: "Archivo", "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font: "Archivo", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --display: "Archivo", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
   --bg: #FBF6F2; --bg-2: #F3E8E0; --card: #FFFFFF; --card-2: #F8F0EA;
   --ink: #1E1410; --ink-2: #5C4B42; --ink-3: rgba(30,20,16,0.56);
   --line: rgba(50,25,15,0.11); --chip: rgba(50,25,15,0.06);
@@ -38,7 +35,7 @@
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --accent: #FF7A45; --accent-ink: #FF9668; --on-accent: #ffffff;
-  --sea: #FF7A45; --sea-tint: rgba(255,122,69,0.14); --sea-glow: rgba(255,122,69,0.30);
+  --sea: #FF7A45; --sea-tint: rgba(255,122,69,0.14);
   --ch-w: #DCE6EC;
   --bg: #0C0907; --bg-2: #17110E; --card: #1E1612; --card-2: #271D18;
   --ink: #F6EFEA; --ink-2: rgba(228,214,205,0.84); --ink-3: rgba(228,214,205,0.54);
@@ -48,7 +45,7 @@
 } }
 :root[data-theme="dark"] {
   --accent: #FF7A45; --accent-ink: #FF9668; --on-accent: #ffffff;
-  --sea: #FF7A45; --sea-tint: rgba(255,122,69,0.14); --sea-glow: rgba(255,122,69,0.30);
+  --sea: #FF7A45; --sea-tint: rgba(255,122,69,0.14);
   --ch-w: #DCE6EC;
   --bg: #0C0907; --bg-2: #17110E; --card: #1E1612; --card-2: #271D18;
   --ink: #F6EFEA; --ink-2: rgba(228,214,205,0.84); --ink-3: rgba(228,214,205,0.54);
@@ -74,7 +71,7 @@ code, .k { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px; border-radius: 999px;
   font-family: inherit; font-size: 15px; font-weight: 600; line-height: 1; background: var(--sea); color: var(--on-accent); border: 0; cursor: pointer;
-  box-shadow: 0 12px 28px -12px var(--sea-glow); transition: transform .2s ease, filter .2s ease;
+  transition: transform .2s ease, filter .2s ease;
 }
 .btn:hover { text-decoration: none; filter: brightness(1.1); transform: translateY(-1px); }
 .btn.ghost { background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
@@ -98,9 +95,6 @@ section.tint { background: var(--bg-2); }
 
 /* Hero */
 .hero { padding: clamp(56px, 9vw, 112px) 0 clamp(64px, 8vw, 104px); text-align: center; overflow: hidden; }
-.hero .glow { position: absolute; inset: -20% -10% auto; height: 90%; pointer-events: none;
-  background: radial-gradient(40% 36% at 30% 30%, rgba(255,122,69,0.18), transparent 70%), radial-gradient(36% 34% at 72% 24%, rgba(200,70,30,0.12), transparent 70%);
-  filter: blur(50px); }
 .hero .wrap { position: relative; }
 .hero .lead { max-width: 660px; margin-left: auto; margin-right: auto; }
 .cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 34px; }
@@ -108,30 +102,6 @@ section.tint { background: var(--bg-2); }
 .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; background: var(--card); box-shadow: var(--shadow); font-weight: 600; color: var(--ink-2); font-size: 13px; }
 .pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--aqua); display: inline-block; }
 
-/* Bühne: stilisiertes Becken mit Lampe und Karten (bleibt in beiden Themes dunkel) */
-.stage { position: relative; margin: clamp(48px, 7vw, 84px) auto 0; max-width: 1100px; }
-.stage .photo { display: block; width: 100%; height: auto; aspect-ratio: 2 / 1; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
-.cards { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; margin-top: clamp(28px, 4vw, 40px); text-align: left; }
-.hc { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 20px 22px; min-width: 0; }
-.hc .top { display: flex; align-items: center; gap: 12px; }
-.hc .ico { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgba(61,139,255,0.20); color: #8AB8FF; }
-.hc .ico svg { width: 20px; height: 20px; }
-.hc .name { font-weight: 600; font-size: 15px; }
-.hc .state { font-size: 13px; color: #9fb2bf; }
-.hc .power { margin-left: auto; width: 42px; height: 24px; border-radius: 999px; background: #006FFF; position: relative; flex: none; }
-.hc .power::after { content: ""; position: absolute; right: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; }
-.chs { display: grid; gap: 12px; margin-top: 18px; }
-.ch { display: grid; grid-template-columns: 64px 1fr 86px; align-items: center; gap: 12px; font: 500 13px/1 var(--mono); color: #9fb2bf; }
-.ch .track { height: 8px; border-radius: 4px; background: rgba(255,255,255,0.1); position: relative; }
-.ch .track i { position: absolute; inset: 0 auto 0 0; border-radius: 4px; }
-.ch b { font-weight: 500; text-align: right; color: #eaf2f7; white-space: nowrap; }
-.rows { display: grid; gap: 0; margin-top: 4px; }
-.rows div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.07); font-size: 14px; }
-.rows div:first-child { border-top: 0; }
-.rows span { color: #9fb2bf; min-width: 0; }
-.rows b { font-weight: 500; text-align: right; color: #eaf2f7; overflow-wrap: anywhere; }
-.rows b.hot { color: #8AB8FF; }
-.fict { margin-top: 16px; font-size: 12px; color: #7f939f; text-align: center; }
 
 /* Bento: Gerade neu */
 .bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
@@ -263,6 +233,38 @@ footer .fine { flex-basis: 100%; line-height: 1.6; }
   .tbl td { border: 0; padding: 2px 0; }
   .tbl td:first-child { white-space: normal; }
 }
+
+/* ---- theme v2 ---- */
+:root { --lane-a: #C9471A; --lane-b: #FF7A45; --radius: 20px; --radius-lg: 28px; --max: 1200px; }
+body { font-family: var(--font); }
+h1 { font-size: clamp(44px, 6vw, 84px); line-height: 1; font-weight: 800; font-stretch: 118%; font-style: italic; letter-spacing: -0.025em; }
+h2 { font-size: clamp(30px, 3.8vw, 48px); line-height: 1.08; font-weight: 750; font-stretch: 112%; letter-spacing: -0.02em; }
+h3 { font-stretch: 106%; }
+h1 em, h2 em { color: inherit !important; font-style: inherit; }
+.center { text-align: left; } .center .lead { margin-left: 0; margin-right: 0; }
+.head { max-width: 50em; }
+.eyebrow { text-transform: none; letter-spacing: 0; font-size: 16px; font-weight: 650; margin-bottom: 12px; }
+.eyebrow::before { display: none; }
+.cap { text-align: left; }
+.btn { border-radius: 12px; }
+.btn.ghost { background: var(--chip); box-shadow: none; }
+.pill { box-shadow: none; background: var(--chip); border-radius: 8px; }
+.b, .tile, .panel, .prof, .tbl, .faq details, .flow .lane { box-shadow: none; border: 1px solid var(--line); }
+.b .tag, .tg, .tbl thead th, .tbl .grp td { text-transform: none; letter-spacing: 0; font-size: 13px; }
+.b .tag, .tg { border-radius: 6px; }
+.tile .ico, .shield .ico { border-radius: 10px; }
+.hero { text-align: left; padding: clamp(48px, 7vw, 96px) 0 clamp(56px, 7vw, 96px); overflow: hidden; }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
+.hero .mark { width: 64px; height: 64px; border-radius: 15px; margin-bottom: 26px; }
+.hero .lead { margin-left: 0; max-width: 34em; }
+.hero .cta, .hero .meta { justify-content: flex-start; }
+.hero .s-lanes { margin-right: calc(-1 * var(--gutter) - 14vw); }
+.s-track b { color: #fff; font: italic 800 clamp(20px, 2.5vw, 34px)/1 var(--font); font-stretch: 116%; letter-spacing: -0.015em; white-space: nowrap; }
+@media (max-width: 900px) { .hero .wrap { grid-template-columns: 1fr; } .hero .s-lanes { margin: 8px calc(-1 * var(--gutter) - 8vw) 0 44px; } }
+.hero h1 { font-size: clamp(32px, 4vw, 52px); }
+@media (max-width: 900px) { .nav-links { display: none; } .nav > .iconbtn { margin-left: auto; } .nav > .btn, .nav .btn { margin-left: 0; } }
+@media (max-width: 480px) { .nav { gap: 6px; } .nav > .btn.small { padding: 0 10px; } }
+@media (max-width: 760px) { .tbl td:first-child { white-space: normal; } }
 </style>
 </head>
 
@@ -287,25 +289,24 @@ footer .fine { flex-basis: 100%; line-height: 1.6; }
 </div>
 
 <section class="hero" id="top">
-  <div class="glow" aria-hidden="true"></div>
   <div class="wrap">
-    <p class="eyebrow reveal"><span class="en">For Home Assistant</span><span class="de">Für Home Assistant</span></p>
-    <h1 class="reveal d1"><span class="en">Remember a state.<br><em>Restore it, unless you changed it.</em></span><span class="de">Zustand merken.<br><em>Zurück, außer du hast verstellt.</em></span></h1>
-    <p class="lead reveal d2"><span class="en">Many automations change something for a while and put it back afterwards: <em>lights for a movie, blinds for the sun, the thermostat while a window is open, the speaker volume for an announcement</em>. Recall does that and <strong>notices when someone took over</strong>: what was moved by hand stays where it is. Named slots, survives restarts, a modern replacement for Saver.</span><span class="de">Viele Automationen verstellen etwas für eine Weile und stellen es danach zurück: <em>Licht für den Film, Jalousien gegen die Sonne, das Thermostat bei offenem Fenster, die Lautstärke für eine Durchsage</em>. Recall macht das und <strong>merkt, wenn jemand übernommen hat</strong>: Was von Hand verstellt wurde, bleibt, wo es ist. Benannte Slots, übersteht Neustarts, ein moderner Ersatz für Saver.</span></p>
-    <div class="cta reveal d3">
-      <a class="btn" href="#install"><span class="en">Install from the Marketplace</span><span class="de">Über den Marketplace installieren</span></a>
-      <a class="btn ghost" href="https://github.com/SH1FT-W/recall#readme"><span class="en">Read the README</span><span class="de">Zur Anleitung</span></a>
+    <div>
+      <img class="mark" src="logo.png" alt="" width="64" height="64">
+      <h1><span class="en">Remember a state.<br>Restore it, unless you changed it.</span><span class="de">Zustand merken.<br>Zurück, außer du hast verstellt.</span></h1>
+      <p class="lead reveal d2"><span class="en">Many automations change something for a while and put it back afterwards: <em>lights for a movie, blinds for the sun, the thermostat while a window is open, the speaker volume for an announcement</em>. Recall does that and <strong>notices when someone took over</strong>: what was moved by hand stays where it is. Named slots, survives restarts, a modern replacement for Saver.</span><span class="de">Viele Automationen verstellen etwas für eine Weile und stellen es danach zurück: <em>Licht für den Film, Jalousien gegen die Sonne, das Thermostat bei offenem Fenster, die Lautstärke für eine Durchsage</em>. Recall macht das und <strong>merkt, wenn jemand übernommen hat</strong>: Was von Hand verstellt wurde, bleibt, wo es ist. Benannte Slots, übersteht Neustarts, ein moderner Ersatz für Saver.</span></p>
+      <div class="cta reveal d3">
+        <a class="btn" href="#install"><span class="en">Install from the Marketplace</span><span class="de">Über den Marketplace installieren</span></a>
+        <a class="btn ghost" href="https://github.com/SH1FT-W/recall#readme"><span class="en">Read the README</span><span class="de">Zur Anleitung</span></a>
+      </div>
+      <p class="meta reveal d3">
+        <span class="pill"><i></i><span id="hl-version">Version 26.11.2</span></span>
+        <span class="en">Home Assistant 2026.9 or newer &middot; English and German &middot; Apache 2.0</span><span class="de">Home Assistant 2026.9 oder neuer &middot; Deutsch und Englisch &middot; Apache 2.0</span>
+      </p>
     </div>
-    <p class="meta reveal d3">
-      <span class="pill"><i></i><span id="hl-version">Version 26.11.2</span></span>
-      <span class="en">Home Assistant 2026.9 or newer &middot; English and German &middot; Apache 2.0</span><span class="de">Home Assistant 2026.9 oder neuer &middot; Deutsch und Englisch &middot; Apache 2.0</span>
-    </p>
-
-    <div class="stage reveal d3">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="images/readme-title-dark.webp">
-        <img class="photo" src="images/readme-title-light.webp" width="2560" height="1280" alt="Recall: Remember a state. Restore it, unless you changed it.">
-      </picture>
+    <div class="s-lanes" aria-hidden="true">
+      <div class="s-lane"><div class="s-track"><b><span class="en">Named slots</span><span class="de">Benannte Slots</span></b></div></div>
+      <div class="s-lane"><div class="s-track"><b><span class="en">Survives restarts</span><span class="de">Übersteht Neustarts</span></b></div></div>
+      <div class="s-lane"><div class="s-track"><b><span class="en">Respects manual changes</span><span class="de">Achtet auf Handeingriffe</span></b></div></div>
     </div>
   </div>
 </section>

@@ -40,10 +40,10 @@ andere Domänen nur in den Tests.
 - `create_scene` legt immer `scene.recall_<id>` an, der Slot bleibt.
 - Logo: Variante B „Lesezeichen“ in `brand/`; Quellen + Erzeuger in `docs/logo-varianten/`
   (`erzeugen.py` schreibt SVGs + `vergleich.html`, PNGs per Edge headless).
-- README-Bilder: Titelbild aus `docs/readme-images.json` mit `theme/v1/readme-images/render.mjs <repo>`
-  aus sh1ft-w.github.io: Titel als `docs/images/readme-title-{light,dark}.webp` (2560 × 1280, Fenster zeigt
-  `docs/images/title-shot-*.png`, den Funktionsblock der Projektseite mit 2× aufgenommen) plus `readme-title-social.png`
-  für die GitHub-Vorschau; README-Aufbau nach `repo-vorlagen/readme-muster.md`, ohne Kartentabellen. Die Projektseite zeigt das Titelbild im Hero.
+- README-Bilder aus `docs/readme-images.json` mit `theme/v2/readme-images/render.mjs <repo>` aus sh1ft-w.github.io:
+  Titel-Banner `docs/images/readme-title-{light,dark}.webp` (2560 × 880) plus `readme-title-social.png` (1280 × 640) für die
+  GitHub-Vorschau, aus `title.name`, `title.line` und drei `title.lanes`. README- und Seitenaufbau nach
+  `repo-vorlagen/readme-muster.md` (Design v2: Hero mit den drei Bahnen, kein Titelbild im Hero).
 
 ## Prüfen
 
