@@ -535,9 +535,13 @@ class RecallManager:
                     context=context,
                     reproduce_options=options,
                 )
-            except ServiceValidationError:
-                raise  # schon verständlich übersetzt (z. B. vom Gerät selbst)
-            except HomeAssistantError as err:
+            except BaseException as err:
+                # The snapshots already wait for settling: plan it, save and refresh the sensor anyway, otherwise
+                # they stay unsettled without a timer and miss later manual changes.
+                if not forget:
+                    self._async_changed()
+                if isinstance(err, ServiceValidationError) or not isinstance(err, HomeAssistantError):
+                    raise  # ServiceValidationError: schon verständlich übersetzt (z. B. vom Gerät selbst)
                 raise HomeAssistantError(
                     translation_domain=DOMAIN,
                     translation_key="restore_failed",

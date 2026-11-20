@@ -293,6 +293,24 @@ async def test_restore_failed(hass: HomeAssistant, home: FakeHome, setup) -> Non
     assert snap(setup) is not None
 
 
+async def test_restore_failed_settles_again(hass: HomeAssistant, home: FakeHome, setup, freezer) -> None:
+    """A failed restore must not leave the slot waiting forever: it settles again and is saved."""
+    await automation(hass, 40)
+    await wait(hass, freezer, 16)
+    assert snap(setup).settled
+    home.fail = True
+    with pytest.raises(HomeAssistantError):
+        await call(hass, "restore", only_if_unchanged=False, forget=False)
+    assert not snap(setup).settled
+    assert hass.states.get(SENSOR).attributes["slots"]["default"][COVER]["settled"] is False
+    home.fail = False
+    await wait(hass, freezer, 61)  # nothing moved: settle_wait
+    assert snap(setup).settled and snap(setup).expected["attributes"]["current_position"] == 40
+    home.cover(70)  # wall switch afterwards: noticed as manual again
+    await hass.async_block_till_done()
+    assert (await call(hass, "restore", forget=False))["skipped"][0]["reason"] == "manual"
+
+
 async def test_forget(hass: HomeAssistant, home: FakeHome, setup) -> None:
     await call(hass, "save", entity_id=[COVER, LIGHT], slot="a")
     await call(hass, "save", entity_id=COVER, slot="b")

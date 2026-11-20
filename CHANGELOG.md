@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Fehlgeschlagenes Wiederherstellen mit `forget: false` (Gerät antwortet nicht) ließ die Einträge des Slots ohne
+  Termin im Beruhigen hängen: Sie wurden nie wieder „ruhig“, ein späterer Handeingriff blieb unerkannt, und der
+  Sensor zeigte den alten Stand. Jetzt beruhigen sie sich wie nach jedem eigenen Befehl neu und werden gespeichert.
+
 ## 26.11.3 – 05.11.2026
 
 - README and project page: new layout, shorter and easier to scan, with one table at the core.
