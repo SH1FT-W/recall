@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 26.11.4 – 20.11.2026
 
 - Fehlgeschlagenes Wiederherstellen mit `forget: false` (Gerät antwortet nicht) ließ die Einträge des Slots ohne
   Termin im Beruhigen hängen: Sie wurden nie wieder „ruhig“, ein späterer Handeingriff blieb unerkannt, und der
